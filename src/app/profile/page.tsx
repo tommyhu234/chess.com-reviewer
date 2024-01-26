@@ -32,11 +32,10 @@ export default async function Profile({ searchParams }: { searchParams: { [key: 
   const profileData = await getProfile(searchParams.username as string)
   const gamesData = await getGames(searchParams.username as string)
   const lastMonthGames = (await getAPIData(gamesData.archives[gamesData.archives.length - 1])).games.reverse().splice(0, 10)
-  console.log(lastMonthGames[0])
   return (
     <main className="flex h-screen flex-col items-center p-24">
       <div>
-        <img src={"https://images.chesscomfiles.com/uploads/v1/user/101115842.d0290ee1.200x200o.d66b0881fef1.jpg"} className="rounded w-32 h-32 object-cover" />
+        <img src={profileData.avatar} className="rounded w-32 h-32 object-cover" />
       </div>
       <div className="mt-4 w-[40%]">
         {lastMonthGames.map((game: any) => {
