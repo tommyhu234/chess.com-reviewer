@@ -5,6 +5,7 @@ const { signal } = new AbortController()
 async function getProfile(username: string) {
   const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}`, {
     signal: signal,
+    cache: 'no-store',
     headers: {
       'User-Agent': 'Chess.com Analyzer'
     }
@@ -18,7 +19,13 @@ async function getProfile(username: string) {
 }
 
 async function getGames(username: string) {
-  const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, { signal })
+  const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, {
+    signal: signal,
+    cache: 'no-store',
+    headers: {
+      'User-Agent': 'Chess.com Analyzer'
+    }
+  })
 
   if (!response.ok) {
     throw new Error(`Failed to fetch games data for user ${username}`)
@@ -28,7 +35,13 @@ async function getGames(username: string) {
 }
 
 async function getAPIData(url: string) {
-  const response = await fetch(url, { signal })
+  const response = await fetch(url, {
+    signal: signal,
+    cache: 'no-store',
+    headers: {
+      'User-Agent': 'Chess.com Analyzer'
+    }
+  })
 
   if (!response.ok) {
     throw new Error(`Failed to fetch data from ${url}`)
