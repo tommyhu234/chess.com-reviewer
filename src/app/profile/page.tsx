@@ -1,14 +1,13 @@
 import Game from './game'
 
-const headers = {
-  'Accept': 'application/json',
-  'Content-Type': 'application/x-www-form-urlencoded',
-  'User-Agent': 'Chess.com Analyzer'
-}
+const { signal } = new AbortController()
 
 async function getProfile(username: string) {
   const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}`, {
-    headers: headers
+    signal: signal,
+    headers: {
+      'User-Agent': 'Chess.com Analyzer'
+    }
   })
 
   if (!response.ok) {
@@ -19,9 +18,7 @@ async function getProfile(username: string) {
 }
 
 async function getGames(username: string) {
-  const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, {
-    headers: headers
-  })
+  const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, { signal })
 
   if (!response.ok) {
     throw new Error(`Failed to fetch games data for user ${username}`)
@@ -31,9 +28,7 @@ async function getGames(username: string) {
 }
 
 async function getAPIData(url: string) {
-  const response = await fetch(url, {
-    headers: headers
-  })
+  const response = await fetch(url, { signal })
 
   if (!response.ok) {
     throw new Error(`Failed to fetch data from ${url}`)

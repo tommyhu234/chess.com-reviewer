@@ -1,8 +1,6 @@
 'use server'
 
-import { redirect } from "next/navigation";
-
-export default async function handleGameClick(pgn: string) {
+export async function getLichessUrl(pgn: string) {
   const encodedKey = encodeURIComponent('pgn')
   const encodedValue = encodeURIComponent(pgn);
 
@@ -20,5 +18,5 @@ export default async function handleGameClick(pgn: string) {
     throw new Error(`Failed to import game to lichess ${response.status}`)
   }
 
-  redirect(response.url)
+  return response.url
 }

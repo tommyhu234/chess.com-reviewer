@@ -1,13 +1,12 @@
 'use client'
 
 import { KeyboardEvent } from "react"
-import navigate from "./navigate"
 
 export default function Home() {
 
   const keyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      navigate(`/profile?username=${event.currentTarget.value}`)
+      window.location.href = `/profile?username=${event.currentTarget.value}`
     }
   }
 

@@ -2,7 +2,7 @@
 
 import { DateTime } from 'luxon'
 import localFont from 'next/font/local'
-import handleGameClick from './navigate'
+import { getLichessUrl } from './actions'
 
 const chessFont = localFont({ src: '../../../public/chessglyph-v3.ff9d64d4.woff2' })
 
@@ -25,7 +25,10 @@ export default function Game({ game: { game, profileData } }: { game: { game: an
     <div
       key={`game-${game.url}]}`}
       className="flex h-[4.5rem] items-center w-full my-[0.075rem] first:mt-0 text-sm bg-[#41403D] p-1 hover:bg-[#2E2D2B]"
-      onClick={e => handleGameClick(game.pgn)}
+      onClick={async (e) => {
+        const url = await getLichessUrl(game.url)
+        window.open(url, '_blank')
+      }}
     >
       <div className="w-[12.5%]"></div>
       <div className="w-[40%] mx-1">
@@ -34,7 +37,7 @@ export default function Game({ game: { game, profileData } }: { game: { game: an
           <div className="text-[#CACAC9] mx-1">{`(${game.white.rating})`}</div>
         </div>
         <div className="flex">
-          <div className="text-[#CACAC9] font-semibold">{game.black.username}</div>
+          <div className="text-[#CACAC9] font-semibold truncate">{game.black.username}</div>
           <div className="text-[#CACAC9] mx-1">{`(${game.black.rating})`}</div>
         </div>
       </div>
