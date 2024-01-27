@@ -1,8 +1,8 @@
 'use client'
 
-import { KeyboardEvent, useCallback } from "react";
-import { navigate } from "./navigate";
-import { useSearchParams } from "next/navigation";
+import { KeyboardEvent, useCallback } from "react"
+import { navigate } from "./navigate"
+import { useSearchParams } from "next/navigation"
 
 export default function Home() {
   const searchParams = useSearchParams()
