@@ -1,7 +1,7 @@
 'use client'
 
 import { KeyboardEvent } from "react"
-import { navigate } from "./navigate"
+import navigate from "./navigate"
 
 export default function Home() {
 
