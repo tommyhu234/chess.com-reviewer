@@ -28,25 +28,25 @@ export default function Game({ game: { game, profileData } }: { game: { game: an
       onClick={e => handleGameClick(game.pgn)}
     >
       <div className="w-[12.5%]"></div>
-      <div className="w-[40%]">
+      <div className="w-[40%] mx-1">
         <div className="flex">
-          <div className="text-[#CACAC9] font-semibold">{game.white.username}</div>
-          <div className="text-[#CACAC9] mx-2">{`(${game.white.rating})`}</div>
+          <div className="text-[#CACAC9] font-semibold truncate">{game.white.username}</div>
+          <div className="text-[#CACAC9] mx-1">{`(${game.white.rating})`}</div>
         </div>
         <div className="flex">
           <div className="text-[#CACAC9] font-semibold">{game.black.username}</div>
-          <div className="text-[#CACAC9] mx-2">{`(${game.black.rating})`}</div>
+          <div className="text-[#CACAC9] mx-1">{`(${game.black.rating})`}</div>
         </div>
       </div>
-      <div className="flex w-[7.5%]">
-        <div className="w-1/2">
+      <div className="flex w-[12.5%] mx-1">
+        <div className="w-6">
           <div className="text-[#9E9E9C] font-semibold">{game.white.result === 'win' ? '1' : game.white.result === 'agreed' ? '½' : '0'}</div>
           <div className="text-[#9E9E9C] font-semibold">{game.black.result === 'win' ? '1' : game.black.result === 'agreed' ? '½' : '0'}</div>
         </div>
         {getResultIcon(result)}
       </div>
-      <div className="text-[#E2E2E1] w-[20%] text-center">{totalMoves}</div>
-      <div className="text-[#E2E2E1]">{date}</div>
+      <div className="text-[#E2E2E1] w-[12.5%] text-center mx-1">{totalMoves}</div>
+      <div className="text-[#E2E2E1] w-[12.5%] text-center mx-1">{date}</div>
     </div>
   )
 }

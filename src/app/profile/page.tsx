@@ -47,17 +47,17 @@ export default async function Profile({ searchParams }: { searchParams: { [key: 
   const gamesData = await getGames(searchParams.username as string)
   const lastMonthGames = (await getAPIData(gamesData.archives[gamesData.archives.length - 1])).games.reverse().splice(0, 10)
   return (
-    <main className="flex h-screen flex-col items-center p-24">
+    <main className="flex h-screen flex-col items-center py-24">
       <div>
         <img src={profileData.avatar} className="rounded w-32 h-32 object-cover" />
       </div>
-      <div className="mt-4 w-[40%]">
+      <div className="mt-4 min-w-[40%]">
         <div className="flex h-10 items-center text-xs text-[#9E9E9C] font-semibold bg-[#2E2D2B]">
           <div className="w-[12.5%]"></div>
-          <div className="w-[40%]">Players</div>
-          <div className="w-[7.5%]">Result</div>
-          <div className="w-[20%] text-center">Moves</div>
-          <div className="w-[12%] text-end">Date</div>
+          <div className="w-[40%] mx-1">Players</div>
+          <div className="w-[12.5%] mx-1">Result</div>
+          <div className="w-[12.5%] text-center mx-1">Moves</div>
+          <div className="w-[12.5%] text-center mx-1">Date</div>
         </div>
         <div>
           {lastMonthGames.map((game: any) => {
