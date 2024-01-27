@@ -24,7 +24,7 @@ async function handleGameClick(pgn: string) {
     throw new Error(`Failed to import game to lichess ${response.status}`)
   }
 
-  window.open(response.url, '_blank')
+  console.log(response.url)
 }
 
 function getResultIcon(result: string) {
