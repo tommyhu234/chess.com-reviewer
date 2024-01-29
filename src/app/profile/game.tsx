@@ -26,7 +26,10 @@ export default function Game({ game: { game, profileData } }: { game: { game: an
       key={`game-${game.url}]}`}
       className="flex h-[4.5rem] items-center w-full my-[0.075rem] first:mt-0 text-sm bg-[#41403D] p-1 hover:bg-[#2E2D2B]"
       onClick={async (e) => {
-        const url = await getLichessUrl(game.pgn)
+        // const url = await getLichessUrl(game.pgn)
+        // params = {username}-{gameId}-{gameDate}
+        const params = btoa(`${profileData.username}-${game.url.split('/')[5]}-${game.pgn.split('\n')[2].split('"')[1]}`)
+        const url = `/analysis?game=${params}`
         window.open(url, '_blank')
       }}
     >

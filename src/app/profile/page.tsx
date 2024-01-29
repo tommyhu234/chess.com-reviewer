@@ -74,5 +74,5 @@ export default async function Profile({ searchParams }: { searchParams: { [key: 
         </div>
       </div>
     </main>
-  );
+  )
 }
