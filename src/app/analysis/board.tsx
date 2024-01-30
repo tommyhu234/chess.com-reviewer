@@ -1,13 +1,13 @@
 'use client'
 
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const Chessboard = dynamic(() => import('chessboardjsx'), {
+const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
 });
 
 export default function Board() {
   return (
-    <Chessboard position="start" width={825} />
+    <Chessboard position="start" width={856} />
   )
 }

@@ -1,13 +1,13 @@
-import Game from './game'
+import Game from "./game"
 
 const { signal } = new AbortController()
 
 async function getProfile(username: string) {
   const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}`, {
     signal: signal,
-    cache: 'no-store',
+    cache: "no-store",
     headers: {
-      'User-Agent': 'Chess.com Analyzer'
+      "User-Agent": "Chess.com Analyzer"
     }
   })
 
@@ -21,9 +21,9 @@ async function getProfile(username: string) {
 async function getGames(username: string) {
   const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, {
     signal: signal,
-    cache: 'no-store',
+    cache: "no-store",
     headers: {
-      'User-Agent': 'Chess.com Analyzer'
+      "User-Agent": "Chess.com Analyzer"
     }
   })
 
@@ -37,9 +37,9 @@ async function getGames(username: string) {
 async function getAPIData(url: string) {
   const response = await fetch(url, {
     signal: signal,
-    cache: 'no-store',
+    cache: "no-store",
     headers: {
-      'User-Agent': 'Chess.com Analyzer'
+      "User-Agent": "Chess.com Analyzer"
     }
   })
 
@@ -60,7 +60,7 @@ export default async function Profile({ searchParams }: { searchParams: { [key: 
         <img src={profileData.avatar} className="rounded w-32 h-32 object-cover" />
       </div>
       <div className="mt-4 min-w-[40%]">
-        <div className="flex h-10 items-center text-xs text-[#9E9E9C] font-semibold bg-[#2E2D2B]">
+        <div className="flex h-10 items-center text-xs text-[#9E9E9C] font-semibold bg-secondary-dark">
           <div className="w-[12.5%]"></div>
           <div className="w-[40%] mx-1">Players</div>
           <div className="w-[12.5%] mx-1">Result</div>

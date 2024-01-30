@@ -5,7 +5,7 @@ import { KeyboardEvent } from "react"
 export default function Home() {
 
   const keyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       window.location.href = `/profile?username=${event.currentTarget.value}`
     }
   }
