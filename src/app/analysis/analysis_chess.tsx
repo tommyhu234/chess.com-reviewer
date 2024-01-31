@@ -14,16 +14,16 @@ export default function AnalysisChess({ game }: { game: string }) {
   chess.loadPgn(game)
   const history = chess.history({ verbose: true })
 
-  const [position, setPosition] = useState({
-    fen: "start",
-    move: null,
-    key: null,
-  })
-
   const moves: Move[][] = []
   for (let i = 0; i < history.length / 2; i++) {
     moves.push([history[i * 2], history[i * 2 + 1]])
   }
+
+  const [position, setPosition] = useState({
+    fen: "start",
+    move: moves[0][0].lan,
+    key: "",
+  })
 
   return (
     <>

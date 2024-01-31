@@ -1,5 +1,4 @@
 import AnalysisChess from "./analysis_chess"
-const stockfish = require("stockfish")
 
 const { signal } = new AbortController()
 
