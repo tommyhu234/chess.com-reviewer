@@ -110,5 +110,5 @@ export async function POST(request: Request) {
   })
 
   const evaluations = await getEvaluations
-  return new Response(JSON.stringify(evaluations))
+  return Response.json(evaluations)
 }
