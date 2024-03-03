@@ -19,7 +19,11 @@ export async function POST(request: Request) {
     let bestMovesCount = 0
 
     for (let i = 0; i < moves.length; i++) {
-      const stockfish = spawn("stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe")
+      let stockfishPath
+      if (process.env.NODE_ENV === "development") {
+        stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+      } else stockfishPath = "stockfish-ubuntu-x86-64-avx2/stockfish/stockfish-ubuntu-x86-64-avx2"
+      const stockfish = spawn(stockfishPath)
 
       const now = Date.now()
 
