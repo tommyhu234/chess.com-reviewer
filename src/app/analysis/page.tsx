@@ -1,4 +1,8 @@
+import { spawn } from "child_process"
 import AnalysisChess from "./analysis_chess"
+import { useEffect } from "react"
+import { Chess } from "chess.js"
+import { send } from "process"
 
 const { signal } = new AbortController()
 

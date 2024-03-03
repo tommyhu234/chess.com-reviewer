@@ -3,7 +3,7 @@
 import { Chess, Move } from "chess.js";
 import dynamic from "next/dynamic";
 import AnalysisMove from "./analysis_move";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
@@ -24,6 +24,31 @@ export default function AnalysisChess({ game }: { game: string }) {
     move: moves[0][0].lan,
     key: "",
   })
+  const [evaluations, setEvaluations] = useState([])
+  const [isLoading, setLoading] = useState(true)
+
+  function Moves({ moves }: { moves: Move[][] }) {
+    if (!isLoading) {
+      return <div className="px-3 py-1 text-xs bg-secondary">
+        {
+          moves.map((move, index) => <AnalysisMove key={`${index}-${move}`} position={position} setPosition={setPosition} move={move} index={index + 1} />)
+        }
+      </div>
+    } else {
+      return <div>Loading...</div>
+    }
+  }
+
+  useEffect(() => {
+    fetch("/analysis/api", {
+      method: "POST",
+      body: JSON.stringify(game),
+    }).then(async (response: Response) => {
+      const data = await response.json()
+      setEvaluations(data)
+      setLoading(false)
+    })
+  }, [])
 
   return (
     <>
@@ -34,11 +59,7 @@ export default function AnalysisChess({ game }: { game: string }) {
       <div className="w-[40%] h-full">
         <div className="flex-col w-[75%] h-full bg-red-500">
           <div className="text-xl font-semibold text-center text-white-light py-2.5 bg-secondary-dark rounded-t">Analysis</div>
-          <div className="px-3 py-1 text-xs bg-secondary">
-            {
-              moves.map((move, index) => <AnalysisMove key={`${index}-${move}`} position={position} setPosition={setPosition} move={move} index={index + 1} />)
-            }
-          </div>
+          <Moves moves={moves} />
         </div>
       </div>
     </>
