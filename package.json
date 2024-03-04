@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "cd public/stockfish-ubuntu-x86-64-avx2/stockfish/src && make -j profile-build ARCH=x86-64-avx2 && cd ../../../../ && next build",
     "start": "next start",
     "lint": "next lint"
   },

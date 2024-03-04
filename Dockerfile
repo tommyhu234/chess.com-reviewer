@@ -11,6 +11,8 @@ RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
+RUN apk add make
+RUN apk add g++
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -24,9 +26,6 @@ RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
-RUN apk add sudo
-RUN apk add make
-RUN apk add g++
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -38,8 +37,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-RUN cd public/stockfish-ubuntu-x86-64/stockfish/src && make -j profile-build ARCH=x86-64-avx2
-RUN cd ../../../../
+# RUN cd public/stockfish-ubuntu-x86-64/stockfish/src && make -j profile-build ARCH=x86-64-avx2
+# RUN cd ../../../../
 
 EXPOSE 3000
 
