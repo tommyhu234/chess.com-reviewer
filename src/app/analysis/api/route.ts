@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic' // defaults to auto
 
 export async function POST(request: Request) {
   const body = await request.json()
-  exec("find / -type d -name 'stockfish-ubuntu-x86-64'", (error, stdout, stderr) => {
+  exec("cd ../ && ls -a -l", (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`)
       return
