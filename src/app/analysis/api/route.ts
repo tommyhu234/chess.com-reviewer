@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic' // defaults to auto
 
 export async function POST(request: Request) {
   const body = await request.json()
-  exec("ls", (error, stdout, stderr) => {
+  exec("cd ___vc && ls -a", (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`)
       return
