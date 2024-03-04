@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       let stockfishPath
       if (process.env.NODE_ENV === "development") {
         stockfishPath = "stockfish-windows-x86-64/stockfish/stockfish-windows-x86-64-avx2.exe"
-      } else stockfishPath = "public/stockfish-ubuntu-x86-64/stockfish/src/stockfish"
+      } else stockfishPath = "stockfish-ubuntu-x86-64/stockfish/src/stockfish"
       const stockfish = spawn(stockfishPath)
 
       const now = Date.now()
