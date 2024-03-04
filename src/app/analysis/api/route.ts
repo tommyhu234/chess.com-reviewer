@@ -6,14 +6,32 @@ export const dynamic = 'force-dynamic' // defaults to auto
 
 export async function POST(request: Request) {
   const body = await request.json()
-  // exec("ls -a -l", (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.error(`exec error: ${error}`)
-  //     return
-  //   }
-  //   console.log(`stdout: ${stdout}`)
-  //   console.error(`stderr: ${stderr}`)
-  // })
+  exec("cd ../ && ls -a -l", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`)
+      return
+    }
+    console.log(`stdout: ${stdout}`)
+    console.error(`stderr: ${stderr}`)
+  })
+
+  exec("cd ../../ && ls -a -l", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`)
+      return
+    }
+    console.log(`stdout: ${stdout}`)
+    console.error(`stderr: ${stderr}`)
+  })
+
+  exec("cd ../../../ && ls -a -l", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`)
+      return
+    }
+    console.log(`stdout: ${stdout}`)
+    console.error(`stderr: ${stderr}`)
+  })
   const chess = new Chess()
   chess.loadPgn(body)
   const moves = chess.history({ verbose: true })
