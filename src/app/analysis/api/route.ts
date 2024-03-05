@@ -65,7 +65,7 @@ export async function POST(request: Request) {
             }
           }
           bestMovesCount++
-          if (bestMovesCount === moves.length) {
+          if (bestMovesCount === 2) {
             console.log(`Time taken: ${Date.now() - now}ms`)
             for (let i = 1; i < evaluations.length; i++) {
               evaluations[i - 1].score = evaluations[i].bestScore
