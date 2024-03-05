@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   //   console.log(`stdout: ${stdout}`)
   //   console.error(`stderr: ${stderr}`)
   // })
+
   const chess = new Chess()
   chess.loadPgn(body)
   const moves = chess.history({ verbose: true })
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
       let stockfishPath
       if (process.env.NODE_ENV === "development") {
         stockfishPath = "stockfish-windows-x86-64/stockfish/stockfish-windows-x86-64-avx2.exe"
-      } else stockfishPath = path.join(process.env.PROJECT_ROOT || "", "stockfish-ubuntu-x86-64/stockfish/src/stockfish")
+      } else stockfishPath = "stockfish-ubuntu-x86-64/stockfish/src/stockfish"
       const stockfish = spawn(stockfishPath)
 
       const now = Date.now()
@@ -123,5 +124,5 @@ export async function POST(request: Request) {
   })
 
   const evaluations = await getEvaluations
-  return Response.json(evaluations)
+  return Response.json(["test"])
 }

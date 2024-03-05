@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 const nextConfig = {
-  env: {
-    PROJECT_ROOT: __dirname
+  experimental: {
+    outputFileTracingIncludes: {
+      '/analysis/api': [
+        './stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe',
+        './stockfish-ubuntu-x86-64/stockfish/src/stockfish',
+      ]
+    }
   }
 }
 export default nextConfig
