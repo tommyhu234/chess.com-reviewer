@@ -1,19 +1,10 @@
 import { Chess } from "chess.js"
-import { exec, spawn } from "child_process"
-import path from "path"
+import { spawn } from "child_process"
 
 export const dynamic = 'force-dynamic' // defaults to auto
 
 export async function POST(request: Request) {
   const body = await request.json()
-  // exec("cd ../../../ && ls -a -l", (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.error(`exec error: ${error}`)
-  //     return
-  //   }
-  //   console.log(`stdout: ${stdout}`)
-  //   console.error(`stderr: ${stderr}`)
-  // })
 
   const chess = new Chess()
   chess.loadPgn(body)
@@ -119,7 +110,7 @@ export async function POST(request: Request) {
       }
 
       sendCommandToStockfish(`position fen ${moves[i].before}`)
-      sendCommandToStockfish(`go depth 15`)
+      sendCommandToStockfish(`go depth 10`)
     }
   })
 
