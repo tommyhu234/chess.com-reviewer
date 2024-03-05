@@ -3,33 +3,60 @@ import { spawn } from "child_process"
 
 export const dynamic = 'force-dynamic' // defaults to auto
 
+enum MoveType {
+  Best = "Best",
+  Excellent = "Excellent",
+  Good = "Good",
+  Inaccuracy = "Inaccuracy",
+  Mistake = "Mistake",
+  Blunder = "Blunder"
+}
+
+type Evaluation = {
+  bestMove: string | null
+  bestScore: string | null
+  score: string | null
+  moveType: MoveType | null
+  bestWinChance: number | null
+  winChance: number | null
+}
+
+const getMoveType = (diff: number) => {
+  if (diff === 0) return MoveType.Best
+  if (diff < 0.02) return MoveType.Excellent
+  if (diff < 0.05) return MoveType.Good
+  if (diff < 0.1) return MoveType.Inaccuracy
+  if (diff < 0.2) return MoveType.Mistake
+  else return MoveType.Blunder
+}
+
+const getWinChance = (score: string | null) => {
+  if (!score) return 0
+  if (score.includes("M")) return score.startsWith("-") ? 0 : 1
+  return (1.0 / (1 + Math.pow(Math.E, Math.pow(-1.1 * parseFloat(score), 3))))
+}
+
 export async function POST(request: Request) {
   const body = await request.json()
 
   const chess = new Chess()
   chess.loadPgn(body)
   const moves = chess.history({ verbose: true })
-  type Evaluation = {
-    bestMove: string | null
-    bestScore: string | null
-    score: string | null
-  }
 
   const getEvaluations: Promise<Evaluation[][]> = new Promise((resolve) => {
     const evaluations: Evaluation[] = []
     let bestMovesCount = 0
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < moves.length; i++) {
       let stockfishPath
       if (process.env.NODE_ENV === "development") {
-        stockfishPath = "stockfish-windows-x86-64/stockfish/stockfish-windows-x86-64-avx2.exe"
+        stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
       } else stockfishPath = "stockfish-ubuntu-x86-64/stockfish/src/stockfish"
       const stockfish = spawn(stockfishPath)
 
       const now = Date.now()
 
       stockfish.stdout.on('data', (data) => {
-        console.log(data.toString())
         if (data.includes("bestmove")) {
           const dataArray = data.toString().split(" ")
           const bestMove = dataArray[dataArray.findIndex((x: string) => x.includes("bestmove")) + 1].substring(0, 4)
@@ -53,26 +80,40 @@ export async function POST(request: Request) {
               evaluations[i] = {
                 bestMove: bestMove,
                 bestScore: bestScore,
-                score: null
+                score: null,
+                moveType: null,
+                bestWinChance: getWinChance(bestScore),
+                winChance: null
               }
             } else {
               console.log(dataArray)
               evaluations[i] = {
                 bestMove: bestMove,
                 bestScore: null,
-                score: null
+                score: null,
+                moveType: null,
+                bestWinChance: null,
+                winChance: null
               }
             }
           }
           bestMovesCount++
-          if (bestMovesCount === 2) {
+          if (bestMovesCount === moves.length) {
             console.log(`Time taken: ${Date.now() - now}ms`)
             for (let i = 1; i < evaluations.length; i++) {
               evaluations[i - 1].score = evaluations[i].bestScore
             }
             const ret: Evaluation[][] = []
             for (let i = 0; i < evaluations.length / 2; i++) {
-              ret.push([evaluations[i * 2], evaluations[i * 2 + 1]])
+              const whiteIndex = i * 2
+              const blackIndex = i * 2 + 1
+              evaluations[whiteIndex].winChance = getWinChance(evaluations[whiteIndex].score)
+              evaluations[whiteIndex].moveType = getMoveType(Math.abs(getWinChance(evaluations[whiteIndex].bestScore) - getWinChance(evaluations[whiteIndex].score)))
+              if (evaluations[blackIndex]) {
+                evaluations[blackIndex].winChance = getWinChance(evaluations[blackIndex].score)
+                evaluations[blackIndex].moveType = getMoveType(Math.abs(getWinChance(evaluations[blackIndex].bestScore) - getWinChance(evaluations[blackIndex].score)))
+              }
+              ret.push([evaluations[whiteIndex], evaluations[blackIndex]])
             }
             resolve(ret)
           }
@@ -96,7 +137,10 @@ export async function POST(request: Request) {
           evaluations[i] = {
             bestMove: null,
             bestScore: bestScore,
-            score: null
+            score: null,
+            moveType: null,
+            bestWinChance: getWinChance(bestScore),
+            winChance: null
           }
         }
       })

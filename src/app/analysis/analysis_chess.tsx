@@ -27,11 +27,19 @@ export default function AnalysisChess({ game }: { game: string }) {
   const [evaluations, setEvaluations] = useState([])
   const [isLoading, setLoading] = useState(true)
 
-  function Moves({ moves }: { moves: Move[][] }) {
+  function Moves({ moves, evaluations }: { moves: Move[][], evaluations: any[] }) {
     if (!isLoading) {
       return <div className="px-3 py-1 text-xs bg-secondary">
         {
-          moves.map((move, index) => <AnalysisMove key={`${index}-${move}`} position={position} setPosition={setPosition} move={move} index={index + 1} />)
+          moves.map((move, index) =>
+            <AnalysisMove
+              key={`${index}-${move}`}
+              position={position}
+              setPosition={setPosition}
+              move={move}
+              index={index + 1}
+              evaluation={evaluations[index]} />
+          )
         }
       </div>
     } else {
@@ -48,7 +56,7 @@ export default function AnalysisChess({ game }: { game: string }) {
       setEvaluations(data)
       setLoading(false)
     })
-  }, [])
+  }, [game])
 
   return (
     <>
@@ -59,7 +67,7 @@ export default function AnalysisChess({ game }: { game: string }) {
       <div className="w-[40%] h-full">
         <div className="flex-col w-[75%] h-full bg-red-500">
           <div className="text-xl font-semibold text-center text-white-light py-2.5 bg-secondary-dark rounded-t">Analysis</div>
-          <Moves moves={moves} />
+          <Moves moves={moves} evaluations={evaluations} />
         </div>
       </div>
     </>
