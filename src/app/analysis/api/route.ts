@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       const now = Date.now()
 
       stockfish.stdout.on('data', (data) => {
+        console.log(data)
         if (data.includes("bestmove")) {
           const dataArray = data.toString().split(" ")
           const bestMove = dataArray[dataArray.findIndex((x: string) => x.includes("bestmove")) + 1].substring(0, 4)
