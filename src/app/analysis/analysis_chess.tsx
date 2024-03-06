@@ -29,7 +29,7 @@ export default function AnalysisChess({ game }: { game: string }) {
 
   function Moves({ moves, evaluations }: { moves: Move[][], evaluations: any[] }) {
     if (!isLoading) {
-      return <div className="px-3 py-1 text-xs bg-secondary">
+      return <div className="px-3 py-1 text-xs bg-secondary h-[774px] overflow-auto">
         {
           moves.map((move, index) =>
             <AnalysisMove
@@ -65,8 +65,8 @@ export default function AnalysisChess({ game }: { game: string }) {
         <Chessboard position={position.fen} width={856} />
       </div>
       <div className="w-[40%] h-full">
-        <div className="flex-col w-[75%] h-full bg-red-500">
-          <div className="text-xl font-semibold text-center text-white-light py-2.5 bg-secondary-dark rounded-t">Analysis</div>
+        <div className="flex-col w-[75%] h-full ">
+          <div className="text-xl font-semibold text-center text-white-light py-2.5 mb-[1px] bg-secondary-dark rounded-t">Analysis</div>
           <Moves moves={moves} evaluations={evaluations} />
         </div>
       </div>
