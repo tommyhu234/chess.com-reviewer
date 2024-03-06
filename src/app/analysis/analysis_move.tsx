@@ -37,17 +37,17 @@ export default function AnalysisMove({ position, setPosition, move, index, evalu
       key={`${index}-${move[0].san}-${move[1] ? move[1].san : ""}`}
       className={`flex px-3 h-[30px] items-center cursor-pointer ${position.key.split("-")[0] == index ? "bg-main" : index % 2 === 0 ? "bg-secondary" : "bg-[#454441]"}`}>
       <div className="text-gray font-semibold w-[20px] mr-[10px]">{index}.</div>
-      <div className={`${getMoveColor(evaluation[0].moveType)} flex items-center hover:text-white font-semibold w-[74px] mr-[10px]`}>
+      <div className={`${getMoveColor(evaluation[0].moveType)} flex items-center hover:text-white font-semibold w-[74px] mr-[10px]`} onClick={() => handleMoveClick(move[0])}>
         {getMoveSymbol(evaluation[0].moveType)}
-        <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-${move[0].san}` ? "bg-[#5A5956]" : ""}`} onClick={() => handleMoveClick(move[0])}>
+        <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-${move[0].san}` ? "bg-[#5A5956]" : ""}`}>
           {move[0].san}
         </div>
       </div>
       {
         move[1] ? (
-          <div className={`${getMoveColor(evaluation[1].moveType)} flex items-center hover:text-white font-semibold w-[74px] mr-[20px]`}>
+          <div className={`${getMoveColor(evaluation[1].moveType)} flex items-center hover:text-white font-semibold w-[74px] mr-[20px]`} onClick={() => handleMoveClick(move[1])}>
             {getMoveSymbol(evaluation[1].moveType)}
-            <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-${move[1].san}` ? "bg-[#5A5956]" : ""}`} onClick={() => handleMoveClick(move[1])}>
+            <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-${move[1].san}` ? "bg-[#5A5956]" : ""}`}>
               {move[1].san}
             </div>
           </div>
