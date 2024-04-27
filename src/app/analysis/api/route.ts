@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     const evaluations: Evaluation[] = []
     let bestMovesCount = 0
 
-    for (let i = 0; i < moves.length; i++) {
+    for (let i = 0; i <= moves.length; i++) {
       let stockfishPath
       if (process.env.NODE_ENV === "development") {
         stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
@@ -154,11 +154,16 @@ export async function POST(request: Request) {
         stockfish.stdin.write(command + '\n');
       }
 
-      sendCommandToStockfish(`position fen ${moves[i].before}`)
+      if (i === moves.length) sendCommandToStockfish(`position fen ${moves[i - 1].after}`)
+      else sendCommandToStockfish(`position fen ${moves[i].before}`)
       sendCommandToStockfish(`go depth 15`)
     }
   })
 
   const evaluations = await getEvaluations
+  evaluations.pop()
+  for (let i = 0; i < evaluations.length; i++) {
+    console.log(`Move ${i + 1}: ${JSON.stringify(evaluations[i])}`)
+  }
   return Response.json(evaluations)
 }
