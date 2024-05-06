@@ -4,8 +4,13 @@ import { Move } from "chess.js"
 import Image from 'next/image'
 
 const getMoveColor = (moveType: string) => {
-  if (moveType === "Blunder") return "text-[#FA412D]"
+  if (moveType === "Blunder") return "text-move-blunder"
   if (moveType === "Mistake") return "text-[#FFA459]"
+  if (moveType === "Miss") return "text-[#FF7769]"
+  if (moveType === "Inaccuracy") return "text-[#F7C631]"
+  if (moveType === "Good") return "text-[#77915F]"
+  if (moveType === "Excellent") return "text-move-best"
+  if (moveType === "Best") return "text-move-best"
   else return "text-gray-light"
 }
 

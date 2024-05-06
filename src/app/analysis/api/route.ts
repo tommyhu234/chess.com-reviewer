@@ -135,5 +135,8 @@ export async function POST(request: Request) {
   })
 
   const evaluations = await getEvaluations
-  return Response.json(evaluations)
+  const goodMoveTypes = ["Best", "Excellent", "Good"]
+  const whiteAccuracy = (evaluations.filter(x => goodMoveTypes.includes(x[0].moveType || "")).length / evaluations.length) * 100
+  const blackAccuracy = (evaluations.filter(x => x[1] && goodMoveTypes.includes(x[1].moveType || "")).length / evaluations.length) * 100
+  return Response.json({ whiteAccuracy: whiteAccuracy, blackAccuracy: blackAccuracy, evaluations: evaluations })
 }

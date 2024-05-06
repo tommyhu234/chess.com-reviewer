@@ -14,7 +14,9 @@ const config: Config = {
         "secondary-dark": "#343331",
         "gray": "#9E9E9C",
         "gray-light": "#CACAC9",
-        "white-light": "#E2E2E1"
+        "white-light": "#E2E2E1",
+        "move-blunder": "#FA412D",
+        "move-best": "#81B64C",
       }
     }
   },
