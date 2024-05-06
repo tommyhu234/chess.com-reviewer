@@ -8,6 +8,7 @@ enum MoveType {
   Excellent = "Excellent",
   Good = "Good",
   Inaccuracy = "Inaccuracy",
+  Miss = "Miss",
   Mistake = "Mistake",
   Blunder = "Blunder"
 }
@@ -87,15 +88,23 @@ export async function POST(request: Request) {
           evaluations.pop()
           const ret: Evaluation[][] = []
           for (let i = 0; i < evaluations.length / 2; i++) {
-            const whiteIndex = i * 2
-            const blackIndex = i * 2 + 1
-            evaluations[whiteIndex].winChance = getWinChance(evaluations[whiteIndex].score)
-            evaluations[whiteIndex].moveType = getMoveType(Math.abs(getWinChance(evaluations[whiteIndex].bestScore) - getWinChance(evaluations[whiteIndex].score)))
-            if (evaluations[blackIndex]) {
-              evaluations[blackIndex].winChance = getWinChance(evaluations[blackIndex].score)
-              evaluations[blackIndex].moveType = getMoveType(Math.abs(getWinChance(evaluations[blackIndex].bestScore) - getWinChance(evaluations[blackIndex].score)))
+            const move = []
+            for (let j = 0; j < 2; j++) {
+              const index = i * 2 + j
+              const evaluation = evaluations[index]
+              if (evaluation) {
+                evaluation.winChance = getWinChance(evaluation.score)
+                if (evaluation.bestMove === moves[index].lan) evaluation.moveType = MoveType.Best
+                else {
+                  const diff = Math.abs(getWinChance(evaluation.bestScore) - getWinChance(evaluation.score))
+                  const prevMoveType = evaluations[index - 1].moveType || ""
+                  if (["Blunder", "Mistake", "Miss", "Inaccuracy"].includes(prevMoveType) && diff >= 0.1) evaluation.moveType = MoveType.Miss
+                  else evaluation.moveType = getMoveType(diff)
+                }
+                move.push(evaluation)
+              }
             }
-            ret.push([evaluations[whiteIndex], evaluations[blackIndex]])
+            ret.push(move)
           }
           resolve(ret)
         } else if (evaluations.length === moves.length) {

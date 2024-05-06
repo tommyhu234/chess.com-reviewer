@@ -10,17 +10,9 @@ const getMoveColor = (moveType: string) => {
 }
 
 const getMoveSymbol = (moveType: string) => {
-  if (moveType === "Blunder") {
-    return <div className="mr-[5px]">
-      <Image src="/moveTypes/blunder.svg" width={16} height={16} alt="" />
-    </div>
-  } else if (moveType === "Mistake") {
-    return <div className="mr-[5px]">
-      <Image src="/moveTypes/mistake.svg" width={16} height={16} alt="" />
-    </div>
-  } else {
-    return <div className="w-[16px] h-[16px] mr-[5px]" />
-  }
+  return <div className="mr-[5px]">
+    <Image src={`/moveTypes/${moveType.toLowerCase()}.png`} width={16} height={16} alt="" />
+  </div>
 }
 
 export default function AnalysisMove({ position, setPosition, move, index, evaluation }: { position: any, setPosition: any, move: Move[], index: number, evaluation: any }) {
