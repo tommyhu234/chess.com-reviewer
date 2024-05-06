@@ -87,7 +87,26 @@ export default function AnalysisChess({ game }: { game: string }) {
     <>
       <div className="w-[21%]"></div>
       <div className="w-[54rem] mr-8">
-        <Chessboard position={position.fen} width={856} />
+        <Chessboard
+          position={position.fen}
+          width={856}
+          lightSquareStyle={{ backgroundColor: "#EBECD0" }}
+          darkSquareStyle={{ backgroundColor: "#739552" }}
+          pieces={{
+            wP: ({ squareWidth }) => <img src="/pieces/wp.png" width={squareWidth} height={squareWidth} />,
+            wN: ({ squareWidth }) => <img src="/pieces/wn.png" width={squareWidth} height={squareWidth} />,
+            wB: ({ squareWidth }) => <img src="/pieces/wb.png" width={squareWidth} height={squareWidth} />,
+            wR: ({ squareWidth }) => <img src="/pieces/wr.png" width={squareWidth} height={squareWidth} />,
+            wQ: ({ squareWidth }) => <img src="/pieces/wq.png" width={squareWidth} height={squareWidth} />,
+            wK: ({ squareWidth }) => <img src="/pieces/wk.png" width={squareWidth} height={squareWidth} />,
+            bP: ({ squareWidth }) => <img src="/pieces/bp.png" width={squareWidth} height={squareWidth} />,
+            bN: ({ squareWidth }) => <img src="/pieces/bn.png" width={squareWidth} height={squareWidth} />,
+            bB: ({ squareWidth }) => <img src="/pieces/bb.png" width={squareWidth} height={squareWidth} />,
+            bR: ({ squareWidth }) => <img src="/pieces/br.png" width={squareWidth} height={squareWidth} />,
+            bQ: ({ squareWidth }) => <img src="/pieces/bq.png" width={squareWidth} height={squareWidth} />,
+            bK: ({ squareWidth }) => <img src="/pieces/bk.png" width={squareWidth} height={squareWidth} />,
+          }}
+        />
       </div>
       <div className="w-[40%] h-full">
         <div className="flex-col w-[75%] h-full">
