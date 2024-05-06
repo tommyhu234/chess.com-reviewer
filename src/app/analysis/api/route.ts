@@ -97,9 +97,11 @@ export async function POST(request: Request) {
                 if (evaluation.bestMove === moves[index].lan) evaluation.moveType = MoveType.Best
                 else {
                   const diff = Math.abs(getWinChance(evaluation.bestScore) - getWinChance(evaluation.score))
-                  const prevMoveType = evaluations[index - 1].moveType || ""
-                  if (["Blunder", "Mistake", "Miss", "Inaccuracy"].includes(prevMoveType) && diff >= 0.1) evaluation.moveType = MoveType.Miss
-                  else evaluation.moveType = getMoveType(diff)
+                  if (index > 0) {
+                    const prevMoveType = evaluations[index - 1].moveType || ""
+                    if (["Blunder", "Mistake", "Miss", "Inaccuracy"].includes(prevMoveType) && diff >= 0.1) evaluation.moveType = MoveType.Miss
+                    else evaluation.moveType = getMoveType(diff)
+                  } else evaluation.moveType = MoveType.Best
                 }
                 move.push(evaluation)
               }

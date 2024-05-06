@@ -75,11 +75,13 @@ export default function AnalysisChess({ game }: { game: string }) {
     const blackUsername = getValue("Black", game)
     fetch(`/profile/api?username=${whiteUsername}`).then(async (response: Response) => {
       const data = await response.json()
-      setWhitePlayer(data)
+      if (data.avatar) setWhitePlayer(data)
+      else setWhitePlayer({ ...data, avatar: "/noavatar.gif" })
     })
     fetch(`/profile/api?username=${blackUsername}`).then(async (response: Response) => {
       const data = await response.json()
-      setBlackPlayer(data)
+      if (data.avatar) setBlackPlayer(data)
+      else setBlackPlayer({ ...data, avatar: "/noavatar.gif" })
     })
   }, [game])
 
