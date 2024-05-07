@@ -17,6 +17,22 @@ const getValue = (key: string, pgn: string) => {
   else return ""
 }
 
+const getSquareColor = (moveType: string, light: boolean) => {
+  if (moveType === "Blunder") return light ? "#F2977F" : "#B66B40"
+  if (moveType === "Mistake") return light ? "#F5C895" : "#B99C56"
+  if (moveType === "Miss") return light ? "#F5B29D" : "#B9865E"
+  if (moveType === "Inaccuracy") return light ? "#F1D981" : "#B5AD42"
+  if (moveType === "Good") return light ? "#C0D2A3" : "#84A664"
+  if (moveType === "Excellent" || moveType === "Best") return light ? "#B6D18E" : "#7AA54F"
+  else return light ? "#F5F682" : "#B9CA43"
+}
+
+const isLightSquare = (square: string) => {
+  const file = square.charCodeAt(0) - "a".charCodeAt(0)
+  const rank = parseInt(square[1]) - 1
+  return (file + rank) % 2 !== 0
+}
+
 export default function AnalysisChess({ game }: { game: string }) {
   const chess = new Chess()
   chess.loadPgn(game)
@@ -31,6 +47,7 @@ export default function AnalysisChess({ game }: { game: string }) {
   const [position, setPosition] = useState({
     fen: "start",
     move: moves[0][0].lan,
+    moveType: "",
     key: "",
   })
   const [evaluations, setEvaluations] = useState([])
@@ -57,6 +74,15 @@ export default function AnalysisChess({ game }: { game: string }) {
       </div>
     } else {
       return <div>Loading...</div>
+    }
+  }
+
+  const getSquareStyles = () => {
+    const from = position.move.slice(0, 2)
+    const to = position.move.slice(2, 4)
+    return {
+      [from]: { backgroundColor: getSquareColor(position.moveType, isLightSquare(from)) },
+      [to]: { backgroundColor: getSquareColor(position.moveType, isLightSquare(to)) }
     }
   }
 
@@ -108,6 +134,7 @@ export default function AnalysisChess({ game }: { game: string }) {
             bQ: ({ squareWidth }) => <img src="/pieces/bq.png" width={squareWidth} height={squareWidth} />,
             bK: ({ squareWidth }) => <img src="/pieces/bk.png" width={squareWidth} height={squareWidth} />,
           }}
+          squareStyles={getSquareStyles()}
         />
       </div>
       <div className="w-[40%] h-full">
