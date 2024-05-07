@@ -34,7 +34,7 @@ const getMoveType = (diff: number) => {
 const getWinChance = (score: string | null) => {
   if (!score) return 0
   if (score.includes("M")) return score.startsWith("-") ? 0 : 1
-  return 0.5 + 0.5 * ((2 / (1 + Math.pow(Math.E, -0.32 * parseFloat(score)))) - 1)
+  return 0.5 + 0.5 * ((2 / (1 + Math.pow(Math.E, -0.4 * parseFloat(score)))) - 1)
 }
 
 export async function POST(request: Request) {
