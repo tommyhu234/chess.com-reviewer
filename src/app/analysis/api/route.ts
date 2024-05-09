@@ -18,10 +18,11 @@ type Evaluation = {
   bestScore: string | null
   score: string | null
   moveType: MoveType | null
-  bestWinChance: number | null
   winChance: number | null
+  accuracy: number | null
 }
 
+// https://support.chess.com/en/articles/8572705-how-are-moves-classified-what-is-a-blunder-or-brilliant-and-etc
 const getMoveType = (diff: number) => {
   if (diff === 0) return MoveType.Best
   if (diff < 0.02) return MoveType.Excellent
@@ -34,8 +35,61 @@ const getMoveType = (diff: number) => {
 const getWinChance = (score: string | null) => {
   if (!score) return 0
   if (score.includes("M")) return score.startsWith("-") ? 0 : 1
-  return 0.5 + 0.5 * ((2 / (1 + Math.pow(Math.E, -0.4 * parseFloat(score)))) - 1)
+  return 0.5 + 0.5 * ((2 / (1 + Math.exp(-0.368 * parseFloat(score)))) - 1)
 }
+
+// https://lichess.org/page/accuracy
+const getAccuracy = (diff: number) => {
+  return 103.1668 * Math.exp(-0.04354 * (diff * 100)) - 3.1669
+}
+
+// https://lichess.org/page/accuracy
+const calculateGameAccuracies = (evaluations: Evaluation[][]) => {
+  const flatEvaluations = evaluations.flat(1)
+  // Define window size
+  const windowSize = Math.min(Math.max(Math.floor(flatEvaluations.length / 10), 2), 8);
+
+  // Calculate weights based on standard deviation of accuracies within windows
+  const weights: number[] = [];
+  for (let i = 0; i < flatEvaluations.length; i++) {
+    const windowAccuracies = [];
+    for (let j = i; j < i + windowSize; j++) {
+      if (flatEvaluations[j]) windowAccuracies.push((flatEvaluations[j].winChance || 0) * 100 || 0)
+    }
+    const mean = windowAccuracies.reduce((acc, val) => acc + val, 0) / windowAccuracies.length
+    const arr = windowAccuracies.map(val => Math.pow(val - mean, 2))
+    const sum = arr.reduce((acc, val) => acc + val, 0)
+    const standardDeviation = Math.sqrt(sum / windowAccuracies.length)
+    weights.push(Math.min(Math.max(standardDeviation, 0.5), 12)); // Ensure weight is between 0.5 and 12
+  }
+
+  // Pair accuracy with weight for each move
+  const weightedAccuracies = flatEvaluations.map((x, index) => {
+    const color = index % 2 === 0 ? 'white' : 'black'
+    const accuracy = x.accuracy
+    const weight = weights[index]
+    return { accuracy, weight, color }
+  })
+
+  // Calculate accuracy for each color using weighted and harmonic means
+  const calculateAccuracy = (color: string) => {
+    const colorAccuracies = weightedAccuracies.filter(move => move.color === color)
+    const weightedSum = colorAccuracies.reduce((acc, move) => acc + ((move.accuracy || 0) * move.weight), 0)
+    const weightSum = colorAccuracies.reduce((acc, move) => acc + move.weight, 0)
+    const weightedMean = weightedSum / weightSum
+
+    const harmonicSum = colorAccuracies.reduce((acc, move) => acc + (1 / (move.accuracy || 0)), 0);
+    const harmonicMean = colorAccuracies.length / harmonicSum;
+
+    return (weightedMean + harmonicMean) / 2
+  }
+
+  // Calculate accuracy for each color
+  const whiteAccuracy = calculateAccuracy('white');
+  const blackAccuracy = calculateAccuracy('black');
+
+  return { whiteAccuracy, blackAccuracy };
+};
 
 export async function POST(request: Request) {
   const body = await request.json()
@@ -75,8 +129,8 @@ export async function POST(request: Request) {
             bestScore: bestScore,
             score: null,
             moveType: null,
-            bestWinChance: getWinChance(bestScore),
-            winChance: null
+            winChance: null,
+            accuracy: null
           }
         } else console.log("no score")
         moveIndex++
@@ -93,15 +147,23 @@ export async function POST(request: Request) {
               const index = i * 2 + j
               const evaluation = evaluations[index]
               if (evaluation) {
-                evaluation.winChance = getWinChance(evaluation.score)
-                if (evaluation.bestMove === moves[index].lan) evaluation.moveType = MoveType.Best
-                else {
-                  const diff = Math.abs(getWinChance(evaluation.bestScore) - getWinChance(evaluation.score))
+                const winChance = getWinChance(evaluation.score)
+                evaluation.winChance = winChance
+                const bestWinChance = getWinChance(evaluation.bestScore)
+                if (evaluation.bestMove === moves[index].lan) {
+                  evaluation.moveType = MoveType.Best
+                  evaluation.accuracy = 100
+                } else {
+                  const diff = Math.abs(bestWinChance - winChance)
                   if (index > 0) {
                     const prevMoveType = evaluations[index - 1].moveType || ""
                     if (["Blunder", "Mistake", "Miss", "Inaccuracy"].includes(prevMoveType) && diff >= 0.1 && diff < 0.2) evaluation.moveType = MoveType.Miss
                     else evaluation.moveType = getMoveType(diff)
-                  } else evaluation.moveType = MoveType.Best
+                    evaluation.accuracy = getAccuracy(diff)
+                  } else {
+                    evaluation.moveType = MoveType.Best
+                    evaluation.accuracy = 100
+                  }
                 }
                 move.push(evaluation)
               }
@@ -137,8 +199,7 @@ export async function POST(request: Request) {
   })
 
   const evaluations = await getEvaluations
-  const goodMoveTypes = ["Best", "Excellent", "Good"]
-  const whiteAccuracy = (evaluations.filter(x => goodMoveTypes.includes(x[0].moveType || "")).length / evaluations.length) * 100
-  const blackAccuracy = (evaluations.filter(x => x[1] && goodMoveTypes.includes(x[1].moveType || "")).length / evaluations.length) * 100
+  const accuracies = calculateGameAccuracies(evaluations)
+  const { whiteAccuracy, blackAccuracy } = accuracies
   return Response.json({ whiteAccuracy: whiteAccuracy, blackAccuracy: blackAccuracy, evaluations: evaluations })
 }
