@@ -99,7 +99,7 @@ export async function POST(request: Request) {
                   const diff = Math.abs(getWinChance(evaluation.bestScore) - getWinChance(evaluation.score))
                   if (index > 0) {
                     const prevMoveType = evaluations[index - 1].moveType || ""
-                    if (["Blunder", "Mistake", "Miss", "Inaccuracy"].includes(prevMoveType) && diff >= 0.1 && diff < 0.1) evaluation.moveType = MoveType.Miss
+                    if (["Blunder", "Mistake", "Miss", "Inaccuracy"].includes(prevMoveType) && diff >= 0.1 && diff < 0.2) evaluation.moveType = MoveType.Miss
                     else evaluation.moveType = getMoveType(diff)
                   } else evaluation.moveType = MoveType.Best
                 }
