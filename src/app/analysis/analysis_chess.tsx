@@ -46,7 +46,7 @@ export default function AnalysisChess({ game }: { game: string }) {
 
   const [position, setPosition] = useState({
     fen: "start",
-    move: moves[0][0].lan,
+    move: "",
     moveType: "",
     key: "",
   })
@@ -78,6 +78,7 @@ export default function AnalysisChess({ game }: { game: string }) {
   }
 
   const getSquareStyles = () => {
+    if (!position.move) return {}
     const from = position.move.slice(0, 2)
     const to = position.move.slice(2, 4)
     return {
