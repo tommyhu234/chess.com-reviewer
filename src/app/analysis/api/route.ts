@@ -18,7 +18,7 @@ type Evaluation = {
   bestScore: string | null
   score: string | null
   moveType: MoveType | null
-  winChance: number | null
+  bestWinChance: number | null
   accuracy: number | null
 }
 
@@ -47,20 +47,22 @@ const getAccuracy = (diff: number) => {
 const calculateGameAccuracies = (evaluations: Evaluation[][]) => {
   const flatEvaluations = evaluations.flat(1)
   // Define window size
-  const windowSize = Math.min(Math.max(Math.floor(flatEvaluations.length / 10), 2), 8);
+  const windowSize = Math.min(Math.max(Math.floor(flatEvaluations.length / 10), 2), 8)
 
   // Calculate weights based on standard deviation of accuracies within windows
-  const weights: number[] = [];
+  const weights: number[] = []
   for (let i = 0; i < flatEvaluations.length; i++) {
-    const windowAccuracies = [];
-    for (let j = i; j < i + windowSize; j++) {
-      if (flatEvaluations[j]) windowAccuracies.push((flatEvaluations[j].winChance || 0) * 100 || 0)
+    const windowAccuracies = []
+    let index = i
+    if (i + windowSize > flatEvaluations.length) index = flatEvaluations.length - windowSize
+    for (let j = index; j < index + windowSize; j++) {
+      if (flatEvaluations[j]) windowAccuracies.push((flatEvaluations[j].bestWinChance || 0) * 100 || 0)
     }
     const mean = windowAccuracies.reduce((acc, val) => acc + val, 0) / windowAccuracies.length
     const arr = windowAccuracies.map(val => Math.pow(val - mean, 2))
     const sum = arr.reduce((acc, val) => acc + val, 0)
     const standardDeviation = Math.sqrt(sum / windowAccuracies.length)
-    weights.push(Math.min(Math.max(standardDeviation, 0.5), 12)); // Ensure weight is between 0.5 and 12
+    weights.push(Math.min(Math.max(standardDeviation, 0.5), 12)) // Ensure weight is between 0.5 and 12
   }
 
   // Pair accuracy with weight for each move
@@ -78,18 +80,18 @@ const calculateGameAccuracies = (evaluations: Evaluation[][]) => {
     const weightSum = colorAccuracies.reduce((acc, move) => acc + move.weight, 0)
     const weightedMean = weightedSum / weightSum
 
-    const harmonicSum = colorAccuracies.reduce((acc, move) => acc + (1 / (move.accuracy || 0)), 0);
+    const harmonicSum = colorAccuracies.reduce((acc, move) => acc + (1 / (move.accuracy || 0)), 0)
     const harmonicMean = colorAccuracies.length / harmonicSum;
 
     return (weightedMean + harmonicMean) / 2
   }
 
   // Calculate accuracy for each color
-  const whiteAccuracy = calculateAccuracy('white');
-  const blackAccuracy = calculateAccuracy('black');
+  const whiteAccuracy = calculateAccuracy('white')
+  const blackAccuracy = calculateAccuracy('black')
 
-  return { whiteAccuracy, blackAccuracy };
-};
+  return { whiteAccuracy, blackAccuracy }
+}
 
 export async function POST(request: Request) {
   const body = await request.json()
@@ -129,7 +131,7 @@ export async function POST(request: Request) {
             bestScore: bestScore,
             score: null,
             moveType: null,
-            winChance: null,
+            bestWinChance: null,
             accuracy: null
           }
         } else console.log("no score")
@@ -148,8 +150,8 @@ export async function POST(request: Request) {
               const evaluation = evaluations[index]
               if (evaluation) {
                 const winChance = getWinChance(evaluation.score)
-                evaluation.winChance = winChance
                 const bestWinChance = getWinChance(evaluation.bestScore)
+                evaluation.bestWinChance = bestWinChance
                 if (evaluation.bestMove === moves[index].lan) {
                   evaluation.moveType = MoveType.Best
                   evaluation.accuracy = 100
