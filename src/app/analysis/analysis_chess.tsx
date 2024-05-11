@@ -59,7 +59,7 @@ export default function AnalysisChess({ game }: { game: string }) {
 
   function Moves({ moves, evaluations }: { moves: Move[][], evaluations: any[] }) {
     if (!isLoading) {
-      return <div className="px-3 py-1 text-xs bg-secondary h-[774px] overflow-auto">
+      return <>
         {
           moves.map((move, index) =>
             <AnalysisMove
@@ -71,10 +71,44 @@ export default function AnalysisChess({ game }: { game: string }) {
               evaluation={evaluations[index]} />
           )
         }
-      </div>
+      </>
     } else {
       return <div>Loading...</div>
     }
+  }
+
+  function Accuracies() {
+    return <>
+      <div className="flex justify-center text-2xl font-semibold text-center space-x-3 text-white-light pt-[15px] bg-secondary">
+        <Image src="/moveTypes/best.png" width={32} height={32} alt="" />
+        <div>
+          Game Review
+        </div>
+      </div>
+      <div className="flex h-[84px] p-[15px] bg-secondary justify-center">
+        <div className={`flex border-2 ${result === "1-0" ? "border-move-best" : "border-move-blunder"} rounded`}>
+          <div className="flex flex-col bg-white w-[100px] h-[50px] rounded-l-sm items-center justify-center text-xl font-bold">
+            <div className="text-xl font-bold h-[24px]">
+              {whiteAccuracy.toFixed(1)}
+            </div>
+            <div className="text-xs text-gray font-semibold">Accuracy</div>
+          </div>
+          <img src={whitePlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-r-sm" />
+        </div>
+        <div className="flex w-[65px] h-full items-center justify-center text-gray-light font-semibold text-xs">
+          {result}
+        </div>
+        <div className={`flex border-2 ${result === "0-1" ? "border-move-best" : "border-move-blunder"} rounded`}>
+          <img src={blackPlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-l-sm" />
+          <div className="flex flex-col w-[100px] h-[50px] rounded-r-sm items-center justify-center">
+            <div className="text-white text-xl font-bold h-[24px]">
+              {blackAccuracy.toFixed(1)}
+            </div>
+            <div className="text-xs text-gray font-semibold">Accuracy</div>
+          </div>
+        </div>
+      </div>
+    </>
   }
 
   const getSquareStyles = () => {
@@ -141,36 +175,10 @@ export default function AnalysisChess({ game }: { game: string }) {
       <div className="w-[40%] h-full">
         <div className="flex-col w-[75%] h-full">
           <div className="text-xl font-semibold text-center text-white-light py-2.5 mb-[1px] bg-secondary-dark rounded-t">Analysis</div>
-          <div className="flex justify-center text-2xl font-semibold text-center space-x-3 text-white-light pt-[15px] bg-secondary">
-            <Image src="/moveTypes/best.png" width={32} height={32} alt="" />
-            <div>
-              Game Review
-            </div>
+          <div className="px-3 py-1 text-xs bg-secondary h-[860px] overflow-auto">
+            <Accuracies />
+            <Moves moves={moves} evaluations={evaluations} />
           </div>
-          <div className="flex h-[84px] p-[15px] bg-secondary justify-center">
-            <div className={`flex border-2 ${result === "1-0" ? "border-move-best" : "border-move-blunder"} rounded`}>
-              <div className="flex flex-col bg-white w-[100px] h-[50px] rounded-l-sm items-center justify-center text-xl font-bold">
-                <div className="text-xl font-bold h-[24px]">
-                  {whiteAccuracy.toFixed(1)}
-                </div>
-                <div className="text-xs text-gray font-semibold">Accuracy</div>
-              </div>
-              <img src={whitePlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-r-sm" />
-            </div>
-            <div className="flex w-[65px] h-full items-center justify-center text-gray-light font-semibold text-xs">
-              {result}
-            </div>
-            <div className={`flex border-2 ${result === "0-1" ? "border-move-best" : "border-move-blunder"} rounded`}>
-              <img src={blackPlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-l-sm" />
-              <div className="flex flex-col w-[100px] h-[50px] rounded-r-sm items-center justify-center">
-                <div className="text-white text-xl font-bold h-[24px]">
-                  {blackAccuracy.toFixed(1)}
-                </div>
-                <div className="text-xs text-gray font-semibold">Accuracy</div>
-              </div>
-            </div>
-          </div>
-          <Moves moves={moves} evaluations={evaluations} />
         </div>
       </div>
     </>
