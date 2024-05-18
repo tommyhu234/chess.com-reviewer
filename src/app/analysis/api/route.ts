@@ -102,41 +102,38 @@ export async function POST(request: Request) {
   const depth = 15
 
   const getEvaluations: Promise<Evaluation[][]> = new Promise((resolve) => {
-    const evaluations: Evaluation[] = []
+    const evaluations: Evaluation[] = Array.from({ length: moves.length + 1 }, () =>
+      ({ bestMove: null, bestScore: null, score: null, moveType: null, bestWinChance: null, accuracy: null })
+    )
     const stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
     const now = Date.now()
     const stockfish = spawn(stockfishPath)
     let moveIndex = 0
 
     stockfish.stdout.on("data", (data) => {
+      if (data.includes(`info depth ${depth}`) && moveIndex < moves.length + 1) {
+        const dataArray = data.toString().split(" ")
+        const isWhite = moveIndex % 2 !== 1
+        let bestScore
+        if (dataArray.includes("mate")) {
+          const value = dataArray[dataArray.findIndex((x: string) => x.includes("mate")) + 1]
+          if (value.startsWith("-")) {
+            if (isWhite) bestScore = `-M${value.substring(1, value.length)}`
+            else bestScore = `M${value.substring(1, value.length)}`
+          }
+          else {
+            if (isWhite) bestScore = `M${value}`
+            else bestScore = `-M${value}`
+          }
+        } else bestScore = (parseInt(dataArray[dataArray.findIndex((x: string) => x.includes("cp")) + 1]) / (isWhite ? 100 : -100)).toString()
+        evaluations[moveIndex].bestScore = bestScore
+      }
       if (data.includes('bestmove') && moveIndex < moves.length + 1) {
         const dataArray = data.toString().split(" ")
         const bestMove = dataArray[dataArray.findIndex((x: string) => x.includes("bestmove")) + 1].substring(0, 4)
-        const isWhite = moveIndex % 2 !== 1
-        if (dataArray.includes("score")) {
-          let bestScore
-          if (dataArray.includes("mate")) {
-            const value = dataArray[dataArray.findIndex((x: string) => x.includes("mate")) + 1]
-            if (value.startsWith("-")) {
-              if (isWhite) bestScore = `-M${value.substring(1, value.length)}`
-              else bestScore = `M${value.substring(1, value.length)}`
-            }
-            else {
-              if (isWhite) bestScore = `M${value}`
-              else bestScore = `-M${value}`
-            }
-          } else bestScore = (parseInt(dataArray[dataArray.findIndex((x: string) => x.includes("cp")) + 1]) / (isWhite ? 100 : -100)).toString()
-          evaluations[moveIndex] = {
-            bestMove: bestMove,
-            bestScore: bestScore,
-            score: null,
-            moveType: null,
-            bestWinChance: null,
-            accuracy: null
-          }
-        } else console.log("no score")
+        evaluations[moveIndex].bestMove = bestMove
         moveIndex++
-        if (evaluations.length === moves.length + 1) {
+        if (moveIndex === moves.length + 1) {
           console.log(`Time taken: ${Date.now() - now}ms`)
           for (let i = 0; i < evaluations.length - 1; i++) {
             evaluations[i].score = evaluations[i + 1].bestScore
@@ -173,7 +170,7 @@ export async function POST(request: Request) {
             ret.push(move)
           }
           resolve(ret)
-        } else if (evaluations.length === moves.length) {
+        } else if (moveIndex === moves.length) {
           stockfish.stdin.write(`position fen ${moves[moves.length - 1].after}\n`)
           stockfish.stdin.write(`go depth ${depth}\n`)
         } else {
