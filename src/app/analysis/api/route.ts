@@ -169,6 +169,7 @@ export async function POST(request: Request) {
             }
             ret.push(move)
           }
+          stockfish.stdin.end()
           resolve(ret)
         } else if (moveIndex === moves.length) {
           stockfish.stdin.write(`position fen ${moves[moves.length - 1].after}\n`)
