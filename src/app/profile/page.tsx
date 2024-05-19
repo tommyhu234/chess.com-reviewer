@@ -53,7 +53,7 @@ async function getAPIData(url: string) {
 export default async function Profile({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const profileData = await getProfile(searchParams.username as string)
   const gamesData = await getGames(searchParams.username as string)
-  const lastMonthGames = (await getAPIData(gamesData.archives[gamesData.archives.length - 1])).games.reverse().splice(0, 10)
+  const lastMonthGames = (await getAPIData(gamesData.archives[gamesData.archives.length - 1])).games.filter((game: any) => game.pgn).reverse().splice(0, 10)
   return (
     <main className="flex h-screen flex-col items-center py-24">
       <div>
