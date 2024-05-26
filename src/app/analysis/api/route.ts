@@ -24,7 +24,6 @@ type Evaluation = {
 
 // https://support.chess.com/en/articles/8572705-how-are-moves-classified-what-is-a-blunder-or-brilliant-and-etc
 const getMoveType = (diff: number) => {
-  if (diff === 0) return MoveType.Best
   if (diff < 0.02) return MoveType.Excellent
   if (diff < 0.05) return MoveType.Good
   if (diff < 0.1) return MoveType.Inaccuracy
@@ -128,7 +127,7 @@ export async function POST(request: Request) {
         } else bestScore = (parseInt(dataArray[dataArray.findIndex((x: string) => x.includes("cp")) + 1]) / (isWhite ? 100 : -100)).toString()
         evaluations[moveIndex].bestScore = bestScore
       }
-      if (data.includes('bestmove') && moveIndex < moves.length + 1) {
+      if (data.includes("bestmove") && moveIndex < moves.length + 1) {
         const dataArray = data.toString().split(" ")
         const bestMove = dataArray[dataArray.findIndex((x: string) => x.includes("bestmove")) + 1].substring(0, 4)
         evaluations[moveIndex].bestMove = bestMove
@@ -168,6 +167,13 @@ export async function POST(request: Request) {
               }
             }
             ret.push(move)
+          }
+          if (moves[moves.length - 1].san.includes("#")) {
+            const score = moves.length % 2 === 0 ? "0-1" : "1-0"
+            evaluations[evaluations.length - 1].score = score
+            evaluations[evaluations.length - 1].bestScore = score
+            evaluations[evaluations.length - 1].moveType = MoveType.Best
+            evaluations[evaluations.length - 1].accuracy = 100
           }
           stockfish.stdin.end()
           resolve(ret)

@@ -1,10 +1,10 @@
 'use client'
 
-import { Chess, Move } from "chess.js";
-import dynamic from "next/dynamic";
+import { Chess, Move } from "chess.js"
+import dynamic from "next/dynamic"
 import Image from 'next/image'
-import AnalysisMove from "./analysis_move";
-import { useEffect, useState } from "react";
+import AnalysisMove from "./analysis_move"
+import { useEffect, useState } from "react"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)

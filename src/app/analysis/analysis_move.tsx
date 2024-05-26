@@ -68,7 +68,7 @@ export default function AnalysisMove({ position, setPosition, move, index, evalu
           <div className="flex w-full justify-end">
             <div className={`flex justify-center items-center w-12 h-6 rounded-[3px] font-bold
               ${!evaluation[selectedMove].score.startsWith('-') ? 'bg-white text-secondary-dark' : 'bg-secondary-dark text-white'}`}>
-              {!evaluation[selectedMove].score.startsWith('-') ? '+' : ''}{evaluation[selectedMove].score}
+              {!evaluation[selectedMove].score.startsWith('-') ? !evaluation[selectedMove].score.includes('-') ? '+' : '' : ''}{evaluation[selectedMove].score}
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default function AnalysisMove({ position, setPosition, move, index, evalu
           <div className="flex w-full justify-end">
             <div className={`flex justify-center items-center w-12 h-6 rounded-[3px] font-bold
               ${!evaluation[selectedMove].bestScore.startsWith('-') ? 'bg-white text-secondary-dark' : 'bg-secondary-dark text-white'}`}>
-              {!evaluation[selectedMove].bestScore.startsWith('-') ? '+' : ''}{evaluation[selectedMove].bestScore}
+              {!evaluation[selectedMove].bestScore.startsWith('-') ? !evaluation[selectedMove].bestScore.includes('-') ? '+' : '' : ''}{evaluation[selectedMove].bestScore}
             </div>
           </div>
         </div>
