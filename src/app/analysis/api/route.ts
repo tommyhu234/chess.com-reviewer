@@ -205,6 +205,15 @@ export async function POST(request: Request) {
   })
 
   const evaluations = await getEvaluations
+  // Convert all the move notations to SAN
+  for (let i = 0; i < evaluations.length; i++) {
+    for (let j = 0; j < evaluations[i].length; j++) {
+      chess.load(moves[i * 2 + j].before)
+      chess.move(evaluations[i][j].bestMove || "")
+      evaluations[i][j].bestMove = chess.history({ verbose: true })[chess.history().length - 1].san
+    }
+  }
+  // Calculate the game accuracies for both players
   const accuracies = calculateGameAccuracies(evaluations)
   const { whiteAccuracy, blackAccuracy } = accuracies
   return Response.json({ whiteAccuracy: whiteAccuracy, blackAccuracy: blackAccuracy, evaluations: evaluations })
