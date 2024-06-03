@@ -3,12 +3,15 @@
 import { Chess, Move } from "chess.js"
 import dynamic from "next/dynamic"
 import Image from 'next/image'
+import localFont from "next/font/local"
 import AnalysisMove from "./analysis_move"
 import { useEffect, useState } from "react"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
 });
+
+const chessFont = localFont({ src: "../../../public/chessglyph-v3.ff9d64d4.woff2" })
 
 const getValue = (key: string, pgn: string) => {
   const regex = new RegExp(`${key} ".+"]`)
@@ -56,6 +59,7 @@ export default function AnalysisChess({ game }: { game: string }) {
   const [blackPlayer, setBlackPlayer] = useState({ avatar: "" })
   const [whiteAccuracy, setWhiteAccuracy] = useState(0.0)
   const [blackAccuracy, setBlackAccuracy] = useState(0.0)
+  const [boardOrientation, setBoardOrientation] = useState("white" as "white" | "black")
 
   function Moves({ moves, evaluations }: { moves: Move[][], evaluations: any[] }) {
     if (!isLoading) {
@@ -152,7 +156,7 @@ export default function AnalysisChess({ game }: { game: string }) {
       <div className="w-[54rem] mr-8">
         <Chessboard
           position={position.fen}
-          width={856}
+          width={824}
           lightSquareStyle={{ backgroundColor: "#EBECD0" }}
           darkSquareStyle={{ backgroundColor: "#739552" }}
           pieces={{
@@ -170,14 +174,21 @@ export default function AnalysisChess({ game }: { game: string }) {
             bK: ({ squareWidth }) => <img src="/pieces/bk.png" width={squareWidth} height={squareWidth} />,
           }}
           squareStyles={getSquareStyles()}
+          orientation={boardOrientation}
         />
       </div>
       <div className="w-[40%] h-full">
         <div className="flex-col w-[75%] h-full">
           <div className="text-xl font-semibold text-center text-white-light py-2.5 mb-[1px] bg-secondary-dark rounded-t">Analysis</div>
-          <div className="px-3 py-1 text-xs bg-secondary h-[860px] overflow-auto">
+          <div className="px-3 py-1 text-xs bg-secondary h-[824px] overflow-auto mb-[1px]">
             <Accuracies />
             <Moves moves={moves} evaluations={evaluations} />
+          </div>
+          <div className="flex bg-secondary-dark h-[51px] rounded-b justify-end items-center">
+            <button
+              className={`${chessFont.className} mx-3 text-2xl text-gray hover:text-gray-light`}
+              onClick={() => setBoardOrientation(boardOrientation === "white" ? "black" : "white")}>
+              f</button>
           </div>
         </div>
       </div>
