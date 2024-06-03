@@ -4,15 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "cd stockfish-ubuntu-x86-64/stockfish/src && make -j profile-build ARCH=x86-64 && cd ../../../ && next build",
+    "build-local": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "chess.js": "^1.0.0-beta.7",
+    "chessboardjsx": "^2.4.7",
     "luxon": "^3.4.4",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sharp": "^0.33.4"
   },
   "devDependencies": {
     "@types/luxon": "^3.4.2",

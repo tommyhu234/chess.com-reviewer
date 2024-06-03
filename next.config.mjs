@@ -1,3 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  experimental: {
+    outputFileTracingIncludes: {
+      '/analysis/api': ['./stockfish-ubuntu-x86-64/stockfish/src/stockfish']
+    }
+  }
+}
 export default nextConfig
