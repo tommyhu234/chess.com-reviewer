@@ -149,7 +149,7 @@ export default function AnalysisChess({ game }: { game: string }) {
       if (data.avatar) setBlackPlayer(data)
       else setBlackPlayer({ ...data, avatar: "/noavatar.gif" })
     })
-    ChessboardArrows('board_wrapper')
+    ChessboardArrows('board_wrapper', 1648)
   }, [game])
 
   return (

@@ -11,7 +11,7 @@ https://github.com/mcba1n/chessboard-arrows
 
 */
 
-var ChessboardArrows = function (id, resFactor = 2, color = 'rgb(150, 190, 70)') {
+var ChessboardArrows = function (id, canvasSize, resFactor = 2, color = 'rgb(150, 190, 70)') {
 
   const NUM_SQUARES = 8
   let drawCanvas, drawContext, primaryCanvas, primaryContext
@@ -176,12 +176,12 @@ var ChessboardArrows = function (id, resFactor = 2, color = 'rgb(150, 190, 70)')
   // source: https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
   function changeResolution(canvas, scaleFactor) {
     // Set up CSS size.
-    canvas.style.width = canvas.width / window.devicePixelRatio + "px"
-    canvas.style.height = canvas.height / window.devicePixelRatio + "px"
+    canvas.style.width = canvasSize / window.devicePixelRatio + "px"
+    canvas.style.height = canvasSize / window.devicePixelRatio + "px"
 
     // Resize canvas and scale future draws.
-    canvas.width = Math.ceil(canvas.width * scaleFactor)
-    canvas.height = Math.ceil(canvas.height * scaleFactor)
+    canvas.width = Math.ceil(canvasSize * scaleFactor)
+    canvas.height = Math.ceil(canvasSize * scaleFactor)
     var ctx = canvas.getContext('2d')
     ctx.scale(scaleFactor, scaleFactor)
     return ctx
