@@ -6,6 +6,7 @@ import Image from 'next/image'
 import localFont from "next/font/local"
 import AnalysisMove from "./analysis_move"
 import { useEffect, useState } from "react"
+import ChessboardArrows from "../../utils/chessboard_arrows"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
@@ -148,34 +149,39 @@ export default function AnalysisChess({ game }: { game: string }) {
       if (data.avatar) setBlackPlayer(data)
       else setBlackPlayer({ ...data, avatar: "/noavatar.gif" })
     })
+    ChessboardArrows('board_wrapper')
   }, [game])
 
   return (
     <>
       <div className="w-[21%]"></div>
       <div className="w-[54rem] mr-8">
-        <Chessboard
-          position={position.fen}
-          width={824}
-          lightSquareStyle={{ backgroundColor: "#EBECD0" }}
-          darkSquareStyle={{ backgroundColor: "#739552" }}
-          pieces={{
-            wP: ({ squareWidth }) => <img src="/pieces/wp.png" width={squareWidth} height={squareWidth} />,
-            wN: ({ squareWidth }) => <img src="/pieces/wn.png" width={squareWidth} height={squareWidth} />,
-            wB: ({ squareWidth }) => <img src="/pieces/wb.png" width={squareWidth} height={squareWidth} />,
-            wR: ({ squareWidth }) => <img src="/pieces/wr.png" width={squareWidth} height={squareWidth} />,
-            wQ: ({ squareWidth }) => <img src="/pieces/wq.png" width={squareWidth} height={squareWidth} />,
-            wK: ({ squareWidth }) => <img src="/pieces/wk.png" width={squareWidth} height={squareWidth} />,
-            bP: ({ squareWidth }) => <img src="/pieces/bp.png" width={squareWidth} height={squareWidth} />,
-            bN: ({ squareWidth }) => <img src="/pieces/bn.png" width={squareWidth} height={squareWidth} />,
-            bB: ({ squareWidth }) => <img src="/pieces/bb.png" width={squareWidth} height={squareWidth} />,
-            bR: ({ squareWidth }) => <img src="/pieces/br.png" width={squareWidth} height={squareWidth} />,
-            bQ: ({ squareWidth }) => <img src="/pieces/bq.png" width={squareWidth} height={squareWidth} />,
-            bK: ({ squareWidth }) => <img src="/pieces/bk.png" width={squareWidth} height={squareWidth} />,
-          }}
-          squareStyles={getSquareStyles()}
-          orientation={boardOrientation}
-        />
+        <div id="board_wrapper" className="relative">
+          <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
+          <canvas id="drawing_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
+          <Chessboard
+            position={position.fen}
+            width={824}
+            lightSquareStyle={{ backgroundColor: "#EBECD0", zIndex: -10 }}
+            darkSquareStyle={{ backgroundColor: "#739552", zIndex: -10 }}
+            pieces={{
+              wP: ({ squareWidth }) => <img src="/pieces/wp.png" width={squareWidth} height={squareWidth} />,
+              wN: ({ squareWidth }) => <img src="/pieces/wn.png" width={squareWidth} height={squareWidth} />,
+              wB: ({ squareWidth }) => <img src="/pieces/wb.png" width={squareWidth} height={squareWidth} />,
+              wR: ({ squareWidth }) => <img src="/pieces/wr.png" width={squareWidth} height={squareWidth} />,
+              wQ: ({ squareWidth }) => <img src="/pieces/wq.png" width={squareWidth} height={squareWidth} />,
+              wK: ({ squareWidth }) => <img src="/pieces/wk.png" width={squareWidth} height={squareWidth} />,
+              bP: ({ squareWidth }) => <img src="/pieces/bp.png" width={squareWidth} height={squareWidth} />,
+              bN: ({ squareWidth }) => <img src="/pieces/bn.png" width={squareWidth} height={squareWidth} />,
+              bB: ({ squareWidth }) => <img src="/pieces/bb.png" width={squareWidth} height={squareWidth} />,
+              bR: ({ squareWidth }) => <img src="/pieces/br.png" width={squareWidth} height={squareWidth} />,
+              bQ: ({ squareWidth }) => <img src="/pieces/bq.png" width={squareWidth} height={squareWidth} />,
+              bK: ({ squareWidth }) => <img src="/pieces/bk.png" width={squareWidth} height={squareWidth} />,
+            }}
+            squareStyles={getSquareStyles()}
+            orientation={boardOrientation}
+          />
+        </div>
       </div>
       <div className="w-[40%] h-full">
         <div className="flex-col w-[75%] h-full">
