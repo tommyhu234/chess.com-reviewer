@@ -15,6 +15,7 @@ enum MoveType {
 
 type Evaluation = {
   bestMove: string | null
+  bestMoveLan: string | null
   bestScore: string | null
   score: string | null
   moveType: MoveType | null
@@ -102,7 +103,7 @@ export async function POST(request: Request) {
 
   const getEvaluations: Promise<Evaluation[][]> = new Promise((resolve) => {
     const evaluations: Evaluation[] = Array.from({ length: moves.length + 1 }, () =>
-      ({ bestMove: null, bestScore: null, score: null, moveType: null, bestWinChance: null, accuracy: null })
+      ({ bestMove: null, bestMoveLan: null, bestScore: null, score: null, moveType: null, bestWinChance: null, accuracy: null })
     )
     const stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
     const now = Date.now()
@@ -130,7 +131,7 @@ export async function POST(request: Request) {
       if (data.includes("bestmove") && moveIndex < moves.length + 1) {
         const dataArray = data.toString().split(" ")
         const bestMove = dataArray[dataArray.findIndex((x: string) => x.includes("bestmove")) + 1].substring(0, 4)
-        evaluations[moveIndex].bestMove = bestMove
+        evaluations[moveIndex].bestMoveLan = bestMove
         moveIndex++
         if (moveIndex === moves.length + 1) {
           console.log(`Time taken: ${Date.now() - now}ms`)
@@ -148,7 +149,7 @@ export async function POST(request: Request) {
                 const winChance = getWinChance(evaluation.score)
                 const bestWinChance = getWinChance(evaluation.bestScore)
                 evaluation.bestWinChance = bestWinChance
-                if (evaluation.bestMove === moves[index].lan) {
+                if (evaluation.bestMoveLan === moves[index].lan) {
                   evaluation.moveType = MoveType.Best
                   evaluation.accuracy = 100
                 } else {
@@ -209,7 +210,7 @@ export async function POST(request: Request) {
   for (let i = 0; i < evaluations.length; i++) {
     for (let j = 0; j < evaluations[i].length; j++) {
       chess.load(moves[i * 2 + j].before)
-      chess.move(evaluations[i][j].bestMove || "")
+      chess.move(evaluations[i][j].bestMoveLan || "")
       evaluations[i][j].bestMove = chess.history({ verbose: true })[chess.history().length - 1].san
     }
   }

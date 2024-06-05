@@ -6,7 +6,7 @@ import Image from 'next/image'
 import localFont from "next/font/local"
 import AnalysisMove from "./analysis_move"
 import { useEffect, useState } from "react"
-import ChessboardArrows from "../../utils/chessboard_arrows"
+import { ChessboardArrows } from "../../utils/chessboard_arrows"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
@@ -72,6 +72,7 @@ export default function AnalysisChess({ game }: { game: string }) {
               position={position}
               setPosition={setPosition}
               move={move}
+              boardOrientation={boardOrientation}
               index={index + 1}
               evaluation={evaluations[index]} />
           )
@@ -149,15 +150,40 @@ export default function AnalysisChess({ game }: { game: string }) {
       if (data.avatar) setBlackPlayer(data)
       else setBlackPlayer({ ...data, avatar: "/noavatar.gif" })
     })
-    ChessboardArrows('board_wrapper', 1648)
+    const primaryCanvas = document.getElementById('primary_canvas') as HTMLCanvasElement
+    const primaryContext = changeResolution(primaryCanvas)
+
+    const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
+    const moveContext = changeResolution(moveCanvas)
+    ChessboardArrows('board_wrapper', primaryCanvas, primaryContext, moveContext)
   }, [game])
+
+  const scaleFactor = 2
+  const canvasSize = 1648
+
+  // source: https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
+  function changeResolution(canvas: HTMLCanvasElement | null) {
+    if (!canvas) return
+    // Set up CSS size.
+    canvas.style.width = canvasSize / window.devicePixelRatio + "px"
+    canvas.style.height = canvasSize / window.devicePixelRatio + "px"
+
+    // Resize canvas and scale future draws.
+    canvas.width = Math.ceil(canvasSize * scaleFactor)
+    canvas.height = Math.ceil(canvasSize * scaleFactor)
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.scale(scaleFactor, scaleFactor)
+    return ctx
+  }
 
   return (
     <>
       <div className="w-[21%]"></div>
       <div className="w-[54rem] mr-8">
         <div id="board_wrapper" className="relative">
-          <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
+          <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-[64%]" width="824" height="824" ></canvas>
+          <canvas id="move_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
           <Chessboard
             position={position.fen}
             width={824}

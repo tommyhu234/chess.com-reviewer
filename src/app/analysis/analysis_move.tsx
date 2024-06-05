@@ -1,5 +1,6 @@
 'use client'
 
+import { drawMoveArrow } from "@/utils/chessboard_arrows"
 import { Move } from "chess.js"
 import Image from 'next/image'
 
@@ -20,7 +21,16 @@ const getMoveSymbol = (moveType: string, size: number) => {
   </div>
 }
 
-export default function AnalysisMove({ position, setPosition, move, index, evaluation }: { position: any, setPosition: any, move: Move[], index: number, evaluation: any }) {
+type Params = {
+  position: any,
+  setPosition: any,
+  move: Move[],
+  boardOrientation: 'white' | 'black',
+  index: number,
+  evaluation: any
+}
+
+export default function AnalysisMove({ position, setPosition, move, boardOrientation, index, evaluation }: Params) {
   const handleMoveClick = (move: Move, white: boolean) => {
     setPosition({
       fen: move.after,
@@ -28,6 +38,9 @@ export default function AnalysisMove({ position, setPosition, move, index, evalu
       moveType: evaluation[white ? 0 : 1].moveType,
       key: `${index}-${move.san}`
     })
+    const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
+    const moveContext = moveCanvas?.getContext('2d')
+    drawMoveArrow(moveCanvas, moveContext, evaluation[white ? 0 : 1].bestMoveLan, boardOrientation)
   }
 
   let selectedMove = null
