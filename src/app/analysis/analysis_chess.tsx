@@ -158,7 +158,6 @@ export default function AnalysisChess({ game }: { game: string }) {
       <div className="w-[54rem] mr-8">
         <div id="board_wrapper" className="relative">
           <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
-          <canvas id="drawing_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
           <Chessboard
             position={position.fen}
             width={824}

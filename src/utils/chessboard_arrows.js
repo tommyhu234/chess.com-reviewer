@@ -11,15 +11,12 @@ https://github.com/mcba1n/chessboard-arrows
 
 */
 
-var ChessboardArrows = function (id, canvasSize, resFactor = 2, color = 'rgb(150, 190, 70)') {
+// color = 'rgb(150, 190, 70)'
+
+var ChessboardArrows = function (id, canvasSize, resFactor = 2, color = 'rgba(250, 170, 0, 0.8)') {
 
   const NUM_SQUARES = 8
-  let drawCanvas, drawContext, primaryCanvas, primaryContext
-
-  // drawing canvas
-  drawCanvas = document.getElementById('drawing_canvas')
-  drawContext = changeResolution(drawCanvas, resFactor)
-  setContextStyle(drawContext)
+  let primaryCanvas, primaryContext
 
   // primary canvas
   primaryCanvas = document.getElementById('primary_canvas')
@@ -87,28 +84,23 @@ var ChessboardArrows = function (id, canvasSize, resFactor = 2, color = 'rgb(150
   function onMouseDown(event) {
     if (event.which == 3) { // right click
       mouseDown = true
-      initialPoint = finalPoint = getMousePos(drawCanvas, event)
+      initialPoint = finalPoint = getMousePos(primaryCanvas, event)
     }
   }
 
   function onMouseUp(event) {
     if (event.which == 3) { // right click
       mouseDown = false
-      finalPoint = getMousePos(drawCanvas, event)
+      finalPoint = getMousePos(primaryCanvas, event)
       // draw an arrow 
       const xDiff = Math.abs(S(finalPoint.x) - S(initialPoint.x))
       const yDiff = Math.abs(S(finalPoint.y) - S(initialPoint.y))
-      if (xDiff === 0 && yDiff === 0) {
-        drawContext.clearRect(0, 0, drawCanvas.width, drawCanvas.height)
-        return
-      }
+      if (xDiff === 0 && yDiff === 0) return
       if ((xDiff === 1 && yDiff == 2)) drawKnightArrowToCanvas(primaryContext, false)
       else if (xDiff === 2 && yDiff == 1) drawKnightArrowToCanvas(primaryContext, true)
       else drawArrowToCanvas(primaryContext)
-      drawContext.clearRect(0, 0, drawCanvas.width, drawCanvas.height)
     } else if (event.which == 1) { // left click
-      // clear canvases
-      drawContext.clearRect(0, 0, drawCanvas.width, drawCanvas.height)
+      // clear canvas
       primaryContext.clearRect(0, 0, primaryCanvas.width, primaryCanvas.height)
     }
   }
