@@ -15,7 +15,6 @@ const arrowWidth = 56
 const lineWidth = 44
 const color = 'rgb(250, 170, 0)'
 const moveColor = 'rgb(150, 190, 70)'
-const resFactor = 2
 
 const ChessboardArrows = function (id, primaryCanvas, primaryContext, moveContext) {
   setContextStyle(primaryContext, color)
@@ -36,8 +35,8 @@ const ChessboardArrows = function (id, primaryCanvas, primaryContext, moveContex
   function getMousePos(canvas, evt) {
     const rect = canvas.getBoundingClientRect()
     return {
-      x: Q((evt.clientX - rect.left) * resFactor),
-      y: Q((evt.clientY - rect.top) * resFactor)
+      x: Q((evt.clientX - rect.left) * 2),
+      y: Q((evt.clientY - rect.top) * 2)
     }
   }
 
@@ -58,7 +57,6 @@ const ChessboardArrows = function (id, primaryCanvas, primaryContext, moveContex
     if (event.which == 3) { // right click
       mouseDown = false
       finalPoint = getMousePos(primaryCanvas, event)
-      console.log(finalPoint)
       // draw an arrow 
       const xDiff = Math.abs(S(finalPoint.x) - S(initialPoint.x))
       const yDiff = Math.abs(S(finalPoint.y) - S(initialPoint.y))
@@ -73,12 +71,12 @@ const ChessboardArrows = function (id, primaryCanvas, primaryContext, moveContex
   }
 
   function Q(x, d) {  // mid-tread quantiser
-    d = (primaryCanvas.width) / (resFactor * 8)
+    d = primaryCanvas.width / 8
     return (d * (Math.floor(x / d) + 0.5))
   }
 
   function S(x) {  // square number
-    return Math.floor(x / ((primaryCanvas.width) / (resFactor * 8)))
+    return Math.floor(x / (primaryCanvas.width / 8))
   }
 
 }
@@ -86,13 +84,12 @@ const ChessboardArrows = function (id, primaryCanvas, primaryContext, moveContex
 const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
 function P(canvas, point) {  // square position
-  const d = (canvas.width) / (resFactor * 8)
+  const d = canvas.width / 8
   return { x: d * (point.x + 0.5), y: d * (point.y + 0.5) }
 }
 
 const drawMoveArrow = function (moveCanvas, moveContext, move, orientation) {
   moveContext.clearRect(0, 0, moveCanvas.width, moveCanvas.height)
-  console.log(move)
   const initialPoint = { x: letters.indexOf(move[0]), y: 8 - parseInt(move[1]) }
   const finalPoint = { x: letters.indexOf(move[2]), y: 8 - parseInt(move[3]) }
   if (orientation === 'black') {

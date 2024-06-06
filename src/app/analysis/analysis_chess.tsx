@@ -158,7 +158,6 @@ export default function AnalysisChess({ game }: { game: string }) {
     ChessboardArrows('board_wrapper', primaryCanvas, primaryContext, moveContext)
   }, [game])
 
-  const scaleFactor = 2
   const canvasSize = 1648
 
   // source: https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
@@ -169,11 +168,10 @@ export default function AnalysisChess({ game }: { game: string }) {
     canvas.style.height = canvasSize / window.devicePixelRatio + "px"
 
     // Resize canvas and scale future draws.
-    canvas.width = Math.ceil(canvasSize * scaleFactor)
-    canvas.height = Math.ceil(canvasSize * scaleFactor)
+    canvas.width = canvasSize
+    canvas.height = canvasSize
     const ctx = canvas.getContext('2d')
     if (!ctx) return
-    ctx.scale(scaleFactor, scaleFactor)
     return ctx
   }
 
