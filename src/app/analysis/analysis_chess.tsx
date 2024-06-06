@@ -164,8 +164,8 @@ export default function AnalysisChess({ game }: { game: string }) {
   function changeResolution(canvas: HTMLCanvasElement | null) {
     if (!canvas) return
     // Set up CSS size.
-    canvas.style.width = canvasSize / window.devicePixelRatio + "px"
-    canvas.style.height = canvasSize / window.devicePixelRatio + "px"
+    canvas.style.width = canvasSize / 2 + "px"
+    canvas.style.height = canvasSize / 2 + "px"
 
     // Resize canvas and scale future draws.
     canvas.width = canvasSize
