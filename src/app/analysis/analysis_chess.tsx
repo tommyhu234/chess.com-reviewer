@@ -6,7 +6,7 @@ import Image from 'next/image'
 import localFont from "next/font/local"
 import AnalysisMove from "./analysis_move"
 import { useEffect, useState } from "react"
-import { ChessboardArrows, drawMoveArrow } from "../../utils/chessboard_arrows"
+import { ChessboardArrows } from "../../utils/chessboard_arrows"
 
 import type { Evaluation } from "./types"
 
@@ -73,6 +73,7 @@ export default function AnalysisChess({ game }: { game: string }) {
               key={`${index}-${move}`}
               position={position}
               setPosition={setPosition}
+              chessboard_arrows={chessboardArrows}
               move={move}
               boardOrientation={boardOrientation}
               index={index + 1}
@@ -136,7 +137,7 @@ export default function AnalysisChess({ game }: { game: string }) {
       const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
       const moveContext = moveCanvas?.getContext('2d')
       const key = position.key.split("-")
-      drawMoveArrow(moveCanvas, moveContext, evaluations[parseInt(key[0]) - 1][parseInt(key[1])].bestMoveLan, newBoardOrientation)
+      chessboardArrows.drawMoveArrow(moveCanvas, moveContext, evaluations[parseInt(key[0]) - 1][parseInt(key[1])].bestMoveLan, newBoardOrientation)
     }
   }
 
@@ -168,11 +169,12 @@ export default function AnalysisChess({ game }: { game: string }) {
 
     const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
     const moveContext = changeResolution(moveCanvas)
-    ChessboardArrows('board_wrapper', primaryCanvas, primaryContext, moveContext)
+    chessboardArrows.mouseArrows('board_wrapper', primaryCanvas, primaryContext, moveContext)
   }, [game])
 
   const canvasSize = 824
   const scaleFactor = 2
+  const chessboardArrows = new ChessboardArrows(scaleFactor)
 
   // source: https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
   function changeResolution(canvas: HTMLCanvasElement | null) {
@@ -194,8 +196,8 @@ export default function AnalysisChess({ game }: { game: string }) {
       <div className="w-[21%]"></div>
       <div className="w-[54rem] mr-8">
         <div id="board_wrapper" className="relative">
-          <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-[64%]" width="824" height="824" ></canvas>
-          <canvas id="move_canvas" className="absolute -top-0 -left-0 opacity-80" width="824" height="824" ></canvas>
+          <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-[64%]" width={canvasSize} height={canvasSize} ></canvas>
+          <canvas id="move_canvas" className="absolute -top-0 -left-0 opacity-80" width={canvasSize} height={canvasSize} ></canvas>
           <Chessboard
             position={position.fen}
             width={824}
