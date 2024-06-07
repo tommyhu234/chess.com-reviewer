@@ -36,7 +36,7 @@ export default function AnalysisMove({ position, setPosition, move, boardOrienta
       fen: move.after,
       move: move.lan,
       moveType: evaluation[white ? 0 : 1].moveType,
-      key: `${index}-${move.san}`
+      key: `${index}-${white ? 0 : 1}-${move.san}`
     })
     const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
     const moveContext = moveCanvas?.getContext('2d')
@@ -44,8 +44,8 @@ export default function AnalysisMove({ position, setPosition, move, boardOrienta
   }
 
   let selectedMove = null
-  if (position.key === `${index}-${move[0].san}`) selectedMove = 0
-  if (move[1] && position.key === `${index}-${move[1].san}`) selectedMove = 1
+  if (position.key === `${index}-0-${move[0].san}`) selectedMove = 0
+  if (move[1] && position.key === `${index}-1-${move[1].san}`) selectedMove = 1
 
   return (
     <>
@@ -55,7 +55,7 @@ export default function AnalysisMove({ position, setPosition, move, boardOrienta
         <div className="text-gray font-semibold w-[20px] mr-[10px]">{index}.</div>
         <div className={`${getMoveColor(evaluation[0].moveType)} flex items-center font-semibold w-[74px] mr-[10px]`} onClick={() => handleMoveClick(move[0], true)}>
           {getMoveSymbol(evaluation[0].moveType, 16)}
-          <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-${move[0].san}` ? "bg-[#5A5A57]" : ""}`}>
+          <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-0-${move[0].san}` ? "bg-[#5A5A57]" : ""}`}>
             {move[0].san}
           </div>
         </div>
@@ -63,7 +63,7 @@ export default function AnalysisMove({ position, setPosition, move, boardOrienta
           move[1] ? (
             <div className={`${getMoveColor(evaluation[1].moveType)} flex items-center font-semibold w-[74px] mr-[20px]`} onClick={() => handleMoveClick(move[1], false)}>
               {getMoveSymbol(evaluation[1].moveType, 16)}
-              <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-${move[1].san}` ? "bg-[#5A5A57]" : ""}`}>
+              <div className={`w-[49px] rounded-[3px] p-1 ${position.key === `${index}-1-${move[1].san}` ? "bg-[#5A5A57]" : ""}`}>
                 {move[1].san}
               </div>
             </div>

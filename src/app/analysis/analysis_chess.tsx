@@ -6,7 +6,9 @@ import Image from 'next/image'
 import localFont from "next/font/local"
 import AnalysisMove from "./analysis_move"
 import { useEffect, useState } from "react"
-import { ChessboardArrows } from "../../utils/chessboard_arrows"
+import { ChessboardArrows, drawMoveArrow } from "../../utils/chessboard_arrows"
+
+import type { Evaluation } from "./types"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
@@ -54,7 +56,7 @@ export default function AnalysisChess({ game }: { game: string }) {
     moveType: "",
     key: "",
   })
-  const [evaluations, setEvaluations] = useState([])
+  const [evaluations, setEvaluations] = useState<Evaluation[][]>([])
   const [isLoading, setLoading] = useState(true)
   const [whitePlayer, setWhitePlayer] = useState({ avatar: "" })
   const [blackPlayer, setBlackPlayer] = useState({ avatar: "" })
@@ -127,6 +129,17 @@ export default function AnalysisChess({ game }: { game: string }) {
     }
   }
 
+  const onFlipClick = () => {
+    const newBoardOrientation = boardOrientation === "white" ? "black" : "white"
+    setBoardOrientation(newBoardOrientation)
+    if (position.key) {
+      const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
+      const moveContext = moveCanvas?.getContext('2d')
+      const key = position.key.split("-")
+      drawMoveArrow(moveCanvas, moveContext, evaluations[parseInt(key[0]) - 1][parseInt(key[1])].bestMoveLan, newBoardOrientation)
+    }
+  }
+
   useEffect(() => {
     fetch("/analysis/api", {
       method: "POST",
@@ -158,18 +171,19 @@ export default function AnalysisChess({ game }: { game: string }) {
     ChessboardArrows('board_wrapper', primaryCanvas, primaryContext, moveContext)
   }, [game])
 
-  const canvasSize = 1648
+  const canvasSize = 824
+  const scaleFactor = 2
 
   // source: https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
   function changeResolution(canvas: HTMLCanvasElement | null) {
     if (!canvas) return
     // Set up CSS size.
-    canvas.style.width = canvasSize / 2 + "px"
-    canvas.style.height = canvasSize / 2 + "px"
+    canvas.style.width = canvasSize + "px"
+    canvas.style.height = canvasSize + "px"
 
     // Resize canvas and scale future draws.
-    canvas.width = canvasSize
-    canvas.height = canvasSize
+    canvas.width = canvasSize * scaleFactor
+    canvas.height = canvasSize * scaleFactor
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     return ctx
@@ -216,7 +230,7 @@ export default function AnalysisChess({ game }: { game: string }) {
           <div className="flex bg-secondary-dark h-[51px] rounded-b justify-end items-center">
             <button
               className={`${chessFont.className} mx-3 text-2xl text-gray hover:text-gray-light`}
-              onClick={() => setBoardOrientation(boardOrientation === "white" ? "black" : "white")}>
+              onClick={onFlipClick}>
               f</button>
           </div>
         </div>

@@ -1,27 +1,10 @@
 import { Chess } from "chess.js"
 import { spawn } from "child_process"
+import { MoveType } from "../types"
+
+import type { Evaluation } from "../types"
 
 export const dynamic = 'force-dynamic' // defaults to auto
-
-enum MoveType {
-  Best = "Best",
-  Excellent = "Excellent",
-  Good = "Good",
-  Inaccuracy = "Inaccuracy",
-  Miss = "Miss",
-  Mistake = "Mistake",
-  Blunder = "Blunder"
-}
-
-type Evaluation = {
-  bestMove: string | null
-  bestMoveLan: string | null
-  bestScore: string | null
-  score: string | null
-  moveType: MoveType | null
-  bestWinChance: number | null
-  accuracy: number | null
-}
 
 // https://support.chess.com/en/articles/8572705-how-are-moves-classified-what-is-a-blunder-or-brilliant-and-etc
 const getMoveType = (diff: number) => {

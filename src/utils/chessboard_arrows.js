@@ -11,8 +11,9 @@ https://github.com/mcba1n/chessboard-arrows
 
 */
 
-const arrowWidth = 56
-const lineWidth = 44
+const scaleFactor = 2
+const arrowWidth = 28 * scaleFactor
+const lineWidth = 22 * scaleFactor
 const color = 'rgb(250, 170, 0)'
 const moveColor = 'rgb(150, 190, 70)'
 
@@ -35,8 +36,8 @@ const ChessboardArrows = function (id, primaryCanvas, primaryContext, moveContex
   function getMousePos(canvas, evt) {
     const rect = canvas.getBoundingClientRect()
     return {
-      x: Q((evt.clientX - rect.left) * 2),
-      y: Q((evt.clientY - rect.top) * 2)
+      x: Q((evt.clientX - rect.left) * scaleFactor),
+      y: Q((evt.clientY - rect.top) * scaleFactor)
     }
   }
 
