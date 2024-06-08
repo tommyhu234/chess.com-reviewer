@@ -200,5 +200,5 @@ export async function POST(request: Request) {
   // Calculate the game accuracies for both players
   const accuracies = calculateGameAccuracies(evaluations)
   const { whiteAccuracy, blackAccuracy } = accuracies
-  return Response.json({ whiteAccuracy: whiteAccuracy, blackAccuracy: blackAccuracy, evaluations: evaluations })
+  return Response.json({ accuracies: { white: whiteAccuracy, black: blackAccuracy }, evaluations: evaluations })
 }

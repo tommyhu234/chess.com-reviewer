@@ -60,8 +60,7 @@ export default function AnalysisChess({ game }: { game: string }) {
   const [isLoading, setLoading] = useState(true)
   const [whitePlayer, setWhitePlayer] = useState({ avatar: "" })
   const [blackPlayer, setBlackPlayer] = useState({ avatar: "" })
-  const [whiteAccuracy, setWhiteAccuracy] = useState(0.0)
-  const [blackAccuracy, setBlackAccuracy] = useState(0.0)
+  const [accuracies, setAccuracies] = useState({ white: 0, black: 0 })
   const [boardOrientation, setBoardOrientation] = useState("white" as "white" | "black")
 
   function Moves({ moves, evaluations }: { moves: Move[][], evaluations: any[] }) {
@@ -98,7 +97,7 @@ export default function AnalysisChess({ game }: { game: string }) {
         <div className={`flex border-2 ${result === "1-0" ? "border-move-best" : "border-move-blunder"} rounded`}>
           <div className="flex flex-col bg-white w-[100px] h-[50px] rounded-l-sm items-center justify-center text-xl font-bold">
             <div className="text-xl font-bold h-[24px]">
-              {whiteAccuracy.toFixed(1)}
+              {accuracies.white.toFixed(1)}
             </div>
             <div className="text-xs text-gray font-semibold">Accuracy</div>
           </div>
@@ -111,7 +110,7 @@ export default function AnalysisChess({ game }: { game: string }) {
           <img src={blackPlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-l-sm" />
           <div className="flex flex-col w-[100px] h-[50px] rounded-r-sm items-center justify-center">
             <div className="text-white text-xl font-bold h-[24px]">
-              {blackAccuracy.toFixed(1)}
+              {accuracies.black.toFixed(1)}
             </div>
             <div className="text-xs text-gray font-semibold">Accuracy</div>
           </div>
@@ -148,8 +147,7 @@ export default function AnalysisChess({ game }: { game: string }) {
     }).then(async (response: Response) => {
       const data = await response.json()
       setEvaluations(data.evaluations)
-      setWhiteAccuracy(data.whiteAccuracy)
-      setBlackAccuracy(data.blackAccuracy)
+      setAccuracies(data.accuracies)
       setLoading(false)
     })
     const whiteUsername = getValue("White", game)
@@ -176,7 +174,6 @@ export default function AnalysisChess({ game }: { game: string }) {
   const scaleFactor = 2
   const chessboardArrows = new ChessboardArrows(scaleFactor)
 
-  // source: https://stackoverflow.com/questions/14488849/higher-dpi-graphics-with-html5-canvas
   function changeResolution(canvas: HTMLCanvasElement | null) {
     if (!canvas) return
     // Set up CSS size.
