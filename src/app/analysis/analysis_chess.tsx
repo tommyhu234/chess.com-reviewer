@@ -4,15 +4,16 @@ import { Chess, Move } from "chess.js"
 import dynamic from "next/dynamic"
 import Image from 'next/image'
 import localFont from "next/font/local"
-import AnalysisMove from "./analysis_move"
+import useSWR from 'swr'
 import { useEffect, useState } from "react"
 import { ChessboardArrows } from "../../utils/chessboard_arrows"
-
-import type { Evaluation } from "./types"
+import AnalysisMove from "./analysis_move"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
-});
+})
+
+const fetcher = (url: string, method?: string, body?: BodyInit) => fetch(url, { method: method, body: body }).then((res) => res.json())
 
 const chessFont = localFont({ src: "../../../public/chessglyph-v3.ff9d64d4.woff2" })
 
@@ -56,15 +57,14 @@ export default function AnalysisChess({ game }: { game: string }) {
     moveType: "",
     key: "",
   })
-  const [evaluations, setEvaluations] = useState<Evaluation[][]>([])
-  const [isLoading, setLoading] = useState(true)
-  const [whitePlayer, setWhitePlayer] = useState({ avatar: "" })
-  const [blackPlayer, setBlackPlayer] = useState({ avatar: "" })
-  const [accuracies, setAccuracies] = useState({ white: 0, black: 0 })
   const [boardOrientation, setBoardOrientation] = useState("white" as "white" | "black")
 
-  function Moves({ moves, evaluations }: { moves: Move[][], evaluations: any[] }) {
-    if (!isLoading) {
+  const review = useSWR(['/analysis/api', 'POST', JSON.stringify(game)], ([url, method, game]) => fetcher(url, method, game))
+  const whitePlayer = useSWR(`/profile/api?username=${getValue("White", game)}`, fetcher)
+  const blackPlayer = useSWR(`/profile/api?username=${getValue("Black", game)}`, fetcher)
+
+  function Moves() {
+    if (review.data) {
       return <>
         {
           moves.map((move, index) =>
@@ -76,7 +76,7 @@ export default function AnalysisChess({ game }: { game: string }) {
               move={move}
               boardOrientation={boardOrientation}
               index={index + 1}
-              evaluation={evaluations[index]} />
+              evaluation={review.data.evaluations[index]} />
           )
         }
       </>
@@ -86,37 +86,39 @@ export default function AnalysisChess({ game }: { game: string }) {
   }
 
   function Accuracies() {
-    return <>
-      <div className="flex justify-center text-2xl font-semibold text-center space-x-3 text-white-light pt-[15px] bg-secondary">
-        <Image src="/moveTypes/best.png" width={32} height={32} alt="" />
-        <div>
-          Game Review
-        </div>
-      </div>
-      <div className="flex h-[84px] p-[15px] bg-secondary justify-center">
-        <div className={`flex border-2 ${result === "1-0" ? "border-move-best" : "border-move-blunder"} rounded`}>
-          <div className="flex flex-col bg-white w-[100px] h-[50px] rounded-l-sm items-center justify-center text-xl font-bold">
-            <div className="text-xl font-bold h-[24px]">
-              {accuracies.white.toFixed(1)}
-            </div>
-            <div className="text-xs text-gray font-semibold">Accuracy</div>
-          </div>
-          <img src={whitePlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-r-sm" />
-        </div>
-        <div className="flex w-[65px] h-full items-center justify-center text-gray-light font-semibold text-xs">
-          {result}
-        </div>
-        <div className={`flex border-2 ${result === "0-1" ? "border-move-best" : "border-move-blunder"} rounded`}>
-          <img src={blackPlayer.avatar} className="w-[50px] h-[50px] object-cover rounded-l-sm" />
-          <div className="flex flex-col w-[100px] h-[50px] rounded-r-sm items-center justify-center">
-            <div className="text-white text-xl font-bold h-[24px]">
-              {accuracies.black.toFixed(1)}
-            </div>
-            <div className="text-xs text-gray font-semibold">Accuracy</div>
+    if (whitePlayer.data && blackPlayer.data) {
+      return <>
+        <div className="flex justify-center text-2xl font-semibold text-center space-x-3 text-white-light pt-[15px] bg-secondary">
+          <Image src="/moveTypes/best.png" width={32} height={32} alt="" />
+          <div>
+            Game Review
           </div>
         </div>
-      </div>
-    </>
+        <div className="flex h-[84px] p-[15px] bg-secondary justify-center">
+          <div className={`flex border-2 ${result === "1-0" ? "border-move-best" : "border-move-blunder"} rounded`}>
+            <div className="flex flex-col bg-white w-[100px] h-[50px] rounded-l-sm items-center justify-center text-xl font-bold">
+              <div className="text-xl font-bold h-[24px]">
+                {review.data ? review.data.accuracies.white.toFixed(1) : '-'}
+              </div>
+              <div className="text-xs text-gray font-semibold">Accuracy</div>
+            </div>
+            <img src={whitePlayer.data.avatar || '/noavatar.gif'} className="w-[50px] h-[50px] object-cover rounded-r-sm" />
+          </div>
+          <div className="flex w-[65px] h-full items-center justify-center text-gray-light font-semibold text-xs">
+            {result}
+          </div>
+          <div className={`flex border-2 ${result === "0-1" ? "border-move-best" : "border-move-blunder"} rounded`}>
+            <img src={blackPlayer.data.avatar || '/noavatar.gif'} className="w-[50px] h-[50px] object-cover rounded-l-sm" />
+            <div className="flex flex-col w-[100px] h-[50px] rounded-r-sm items-center justify-center">
+              <div className="text-white text-xl font-bold h-[24px]">
+                {review.data ? review.data.accuracies.black.toFixed(1) : '-'}
+              </div>
+              <div className="text-xs text-gray font-semibold">Accuracy</div>
+            </div>
+          </div>
+        </div>
+      </>
+    } else return <div className="h-[131px] w-full"></div>
   }
 
   const getSquareStyles = () => {
@@ -136,32 +138,11 @@ export default function AnalysisChess({ game }: { game: string }) {
       const moveCanvas = document.getElementById('move_canvas') as HTMLCanvasElement
       const moveContext = moveCanvas?.getContext('2d')
       const key = position.key.split("-")
-      chessboardArrows.drawMoveArrow(moveCanvas, moveContext, evaluations[parseInt(key[0]) - 1][parseInt(key[1])].bestMoveLan, newBoardOrientation)
+      chessboardArrows.drawMoveArrow(moveCanvas, moveContext, review.data.evaluations[parseInt(key[0]) - 1][parseInt(key[1])].bestMoveLan, newBoardOrientation)
     }
   }
 
   useEffect(() => {
-    fetch("/analysis/api", {
-      method: "POST",
-      body: JSON.stringify(game),
-    }).then(async (response: Response) => {
-      const data = await response.json()
-      setEvaluations(data.evaluations)
-      setAccuracies(data.accuracies)
-      setLoading(false)
-    })
-    const whiteUsername = getValue("White", game)
-    const blackUsername = getValue("Black", game)
-    fetch(`/profile/api?username=${whiteUsername}`).then(async (response: Response) => {
-      const data = await response.json()
-      if (data.avatar) setWhitePlayer(data)
-      else setWhitePlayer({ ...data, avatar: "/noavatar.gif" })
-    })
-    fetch(`/profile/api?username=${blackUsername}`).then(async (response: Response) => {
-      const data = await response.json()
-      if (data.avatar) setBlackPlayer(data)
-      else setBlackPlayer({ ...data, avatar: "/noavatar.gif" })
-    })
     const primaryCanvas = document.getElementById('primary_canvas') as HTMLCanvasElement
     const primaryContext = changeResolution(primaryCanvas)
 
@@ -224,7 +205,7 @@ export default function AnalysisChess({ game }: { game: string }) {
           <div className="text-xl font-semibold text-center text-white-light py-2.5 mb-[1px] bg-secondary-dark rounded-t">Analysis</div>
           <div className="px-3 py-1 text-xs bg-secondary h-[824px] overflow-auto mb-[1px]">
             <Accuracies />
-            <Moves moves={moves} evaluations={evaluations} />
+            <Moves />
           </div>
           <div className="flex bg-secondary-dark h-[51px] rounded-b justify-end items-center">
             <button
