@@ -77,6 +77,8 @@ const calculateGameAccuracies = (evaluations: Evaluation[][]) => {
 }
 
 export async function POST(request: Request) {
+  const now = Date.now()
+
   const body = await request.json()
 
   const chess = new Chess()
@@ -89,7 +91,6 @@ export async function POST(request: Request) {
       ({ bestMove: null, bestMoveLan: null, bestScore: null, score: null, moveType: null, bestWinChance: null, accuracy: null })
     )
     const stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
-    const now = Date.now()
     const stockfish = spawn(stockfishPath)
     let moveIndex = 0
 
@@ -117,7 +118,6 @@ export async function POST(request: Request) {
         evaluations[moveIndex].bestMoveLan = bestMove
         moveIndex++
         if (moveIndex === moves.length + 1) {
-          console.log(`Time taken: ${Date.now() - now}ms`)
           for (let i = 0; i < evaluations.length - 1; i++) {
             evaluations[i].score = evaluations[i + 1].bestScore
           }
@@ -175,10 +175,6 @@ export async function POST(request: Request) {
       console.error(`stderr: ${data}`)
     })
 
-    stockfish.on("close", (code) => {
-      console.log(`child process exited with code ${code}`)
-    })
-
     // Function to send commands to Stockfish
     const sendCommandToStockfish = (command: string) => {
       stockfish.stdin.write(command + '\n');
@@ -200,5 +196,6 @@ export async function POST(request: Request) {
   // Calculate the game accuracies for both players
   const accuracies = calculateGameAccuracies(evaluations)
   const { whiteAccuracy, blackAccuracy } = accuracies
+  console.log(`Time taken: ${Date.now() - now}ms`)
   return Response.json({ accuracies: { white: whiteAccuracy, black: blackAccuracy }, evaluations: evaluations })
 }
