@@ -16,7 +16,7 @@ const getMoveColor = (moveType: string) => {
 
 const getMoveSymbol = (moveType: string, size: number) => {
   return <div className="mr-[5px]">
-    <Image src={`/moveTypes/${moveType.toLowerCase()}.png`} width={size} height={size} alt="" />
+    <Image src={`/moveTypes/${moveType.toLowerCase()}.png`} width={size} height={size} style={{ maxWidth: 'none' }} alt="" />
   </div>
 }
 
@@ -73,8 +73,8 @@ export default function AnalysisMove({ position, setPosition, chessboard_arrows,
         }
       </div>
       {selectedMove !== null &&
-        <div className="flex w-full h-14 my-2 bg-[#5A5A57] rounded-lg py-3 px-5">
-          {getMoveSymbol(evaluation[selectedMove].moveType, 34)}
+        <div className="flex w-full h-14 my-2 bg-[#5A5A57] rounded-lg py-3 px-5 items-center">
+          {getMoveSymbol(evaluation[selectedMove].moveType, 23)}
           <div className={`flex items-center ml-0.5 h-7 font-semibold whitespace-nowrap ${getMoveColor(evaluation[selectedMove].moveType)}`}>
             {move[selectedMove].san} is {evaluation[selectedMove].moveType.toLowerCase()}
           </div>
@@ -87,8 +87,8 @@ export default function AnalysisMove({ position, setPosition, chessboard_arrows,
         </div>
       }
       {(selectedMove !== null && evaluation[selectedMove].moveType !== "Best") &&
-        <div className="flex w-full h-14 my-2 bg-[#5A5A57] rounded-lg py-3 px-5">
-          {getMoveSymbol("Best", 34)}
+        <div className="flex w-full h-14 my-2 bg-[#5A5A57] rounded-lg py-3 px-5 items-center">
+          {getMoveSymbol("Best", 23)}
           <div className={`flex items-center ml-0.5 h-7 font-semibold whitespace-nowrap text-move-best`}>
             {evaluation[selectedMove].bestMove} is best
           </div>
