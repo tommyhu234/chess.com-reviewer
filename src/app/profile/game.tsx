@@ -6,10 +6,12 @@ import { getLichessUrl } from "./actions"
 
 const chessFont = localFont({ src: "../../../public/chessglyph-v3.ff9d64d4.woff2" })
 
+const drawCodes = ['agreed', 'repetition', 'stalemate', 'insufficient', '50move']
+
 function getResultIcon(result: string) {
   return (
     <div className="flex items-center justify-center">
-      <div className={`${chessFont.className} ${result === "win" ? "text-[#81B64C]" : result === "agreed" ? "text-[#A0A09E]" : "text-[#FA412D]"} text-xl`}>
+      <div className={`${chessFont.className} ${result === "win" ? "text-[#81B64C]" : drawCodes.includes(result) ? "text-[#A0A09E]" : "text-[#FA412D]"} text-xl`}>
         {result === "win" ? "\u1F01" : result === "agreed" ? "\u1F03" : "\u1F02"}
       </div>
     </div>
@@ -46,8 +48,8 @@ export default function Game({ game: { game, profileData } }: { game: { game: an
       </div>
       <div className="flex w-[12.5%] mx-1">
         <div className="w-6">
-          <div className="text-gray font-semibold">{game.white.result === "win" ? "1" : game.white.result === "agreed" ? "½" : "0"}</div>
-          <div className="text-gray font-semibold">{game.black.result === "win" ? "1" : game.black.result === "agreed" ? "½" : "0"}</div>
+          <div className="text-gray font-semibold">{game.white.result === "win" ? "1" : drawCodes.includes(game.white.result) ? "½" : "0"}</div>
+          <div className="text-gray font-semibold">{game.black.result === "win" ? "1" : drawCodes.includes(game.black.result) ? "½" : "0"}</div>
         </div>
         {getResultIcon(result)}
       </div>
