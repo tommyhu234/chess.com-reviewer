@@ -8,6 +8,7 @@ import useSWR from 'swr'
 import { useEffect, useState } from "react"
 import { ChessboardArrows } from "../../utils/chessboard_arrows"
 import AnalysisMove from "./analysis_move"
+import MoveSymbol from "./move_symbol"
 
 const Chessboard = dynamic(() => import("chessboardjsx"), {
   ssr: false  // <- this do the magic ;)
@@ -55,7 +56,7 @@ export default function AnalysisChess({ game }: { game: string }) {
     fen: "start",
     move: "",
     moveType: "",
-    key: "",
+    key: "", // `${index}-${white ? 0 : 1}-${move.san}`
   })
   const [boardOrientation, setBoardOrientation] = useState("white" as "white" | "black")
 
@@ -131,6 +132,19 @@ export default function AnalysisChess({ game }: { game: string }) {
     }
   }
 
+  // coordinate * (canvasSize / 8) + C 
+  const squarePositionsX = ['left-[77px]', 'left-[180px]', 'left-[283px]', 'left-[386px]', 'left-[489px]', 'left-[592px]', 'left-[695px]', 'left-[780.5px]']
+  const squarePositionsY = ['top-[2px]', 'top-[89px]', 'top-[192px]', 'top-[295px]', 'top-[398px]', 'top-[501px]', 'top-[604px]', 'top-[707px]']
+
+  const getSymbolPosition = (key: string, boardOrientation: 'white' | 'black') => {
+    const splitKey = key.split('-')
+    const to = moves[parseInt(splitKey[0]) - 1][parseInt(splitKey[1])].to
+    const point = chessboardArrows.getSquareCoordinates(to, boardOrientation)
+    const xPosition = squarePositionsX[point.x]
+    const yPosition = squarePositionsY[point.y]
+    return `${xPosition} ${yPosition}`
+  }
+
   const onFlipClick = () => {
     const newBoardOrientation = boardOrientation === "white" ? "black" : "white"
     setBoardOrientation(newBoardOrientation)
@@ -176,6 +190,11 @@ export default function AnalysisChess({ game }: { game: string }) {
         <div id="board_wrapper" className="relative">
           <canvas id="primary_canvas" className="absolute -top-0 -left-0 opacity-[64%]" width={canvasSize} height={canvasSize} ></canvas>
           <canvas id="move_canvas" className="absolute -top-0 -left-0 opacity-80" width={canvasSize} height={canvasSize} ></canvas>
+          {position.moveType &&
+            <div className={`absolute ${getSymbolPosition(position.key, boardOrientation)}`}>
+              <MoveSymbol moveType={position.moveType} size={40} />
+            </div>
+          }
           <Chessboard
             position={position.fen}
             width={824}

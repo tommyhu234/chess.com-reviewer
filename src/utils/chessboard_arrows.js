@@ -28,16 +28,19 @@ class ChessboardArrows {
     return { x: d * (point.x + 0.5), y: d * (point.y + 0.5) }
   }
 
+  getSquareCoordinates(move, orientation) {
+    const point = { x: this.#letters.indexOf(move[0]), y: 8 - parseInt(move[1]) }
+    if (orientation === 'black') {
+      point.x = 7 - point.x
+      point.y = 7 - point.y
+    }
+    return point
+  }
+
   drawMoveArrow(moveCanvas, moveContext, move, orientation) {
     moveContext.clearRect(0, 0, moveCanvas.width, moveCanvas.height)
-    const initialPoint = { x: this.#letters.indexOf(move[0]), y: 8 - parseInt(move[1]) }
-    const finalPoint = { x: this.#letters.indexOf(move[2]), y: 8 - parseInt(move[3]) }
-    if (orientation === 'black') {
-      initialPoint.x = 7 - initialPoint.x
-      initialPoint.y = 7 - initialPoint.y
-      finalPoint.x = 7 - finalPoint.x
-      finalPoint.y = 7 - finalPoint.y
-    }
+    const initialPoint = this.getSquareCoordinates(move, orientation)
+    const finalPoint = this.getSquareCoordinates(move.slice(2), orientation)
     // draw an arrow 
     const xDiff = Math.abs(finalPoint.x - initialPoint.x)
     const yDiff = Math.abs(finalPoint.y - initialPoint.y)
