@@ -1,36 +1,32 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This project retrieves your chess games from Chess.com and reviews the games using the Stockfish chess engine.
 
 ## Getting Started
 
-First, run the development server:
+First install the node modules:
+
+```bash
+npm install
+```
+
+Also install a version of Stockfish compatible with your OS from the following site: https://stockfishchess.org/download/
+After installing the Stockfish executable put it in repository and add the path to the .env.local file.
+
+Run the dev version or built the project:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```bash
+npm run build-local
+npm run start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Open http://localhost:3000 with your browser to see the site where you can fill in your chess.com username and review your games.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The performance of Stockfish could be slow depending on your hardware. Consider lowering the depth to increase performance in the src\app\analysis\api\route.ts file.
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Deployment on Vercel is possible but due to the poor performance of Stockfish on the deployment it would be better to run it locally.

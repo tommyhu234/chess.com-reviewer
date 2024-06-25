@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     const evaluations: Evaluation[] = Array.from({ length: moves.length + 1 }, () =>
       ({ bestMove: null, bestMoveLan: null, bestScore: null, score: null, moveType: null, bestWinChance: null, accuracy: null })
     )
-    const stockfishPath = "stockfish-windows-x86-64-avx2/stockfish/stockfish-windows-x86-64-avx2.exe"
+    const stockfishPath = process.env.STOCKFISH_PATH || ""
     const stockfish = spawn(stockfishPath)
     let moveIndex = 0
 
