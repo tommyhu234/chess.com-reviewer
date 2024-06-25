@@ -14,7 +14,7 @@ Also install a version of Stockfish compatible with your OS from the following s
 
 After installing the Stockfish executable put it in repository and add the path to the .env.local file.
 
-Run the dev version or built the project:
+Run the dev version or build the project:
 
 ```bash
 npm run dev
