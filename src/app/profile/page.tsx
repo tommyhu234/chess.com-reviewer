@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation"
 import Game from "./game"
 
 const { signal } = new AbortController()
@@ -12,7 +13,7 @@ async function getProfile(username: string) {
   })
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch profile data for user ${username}`)
+    redirect(`/?searchError=Failed to fetch profile data for user ${username}`)
   }
 
   return response.json()
@@ -28,7 +29,7 @@ async function getGames(username: string) {
   })
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch games data for user ${username}`)
+    redirect(`/?searchError=Failed to fetch games data for user ${username}`)
   }
 
   return response.json()
@@ -44,7 +45,7 @@ async function getAPIData(url: string) {
   })
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch data from ${url}`)
+    redirect(`/?searchError=Failed to fetch data from ${url}`)
   }
 
   return response.json()

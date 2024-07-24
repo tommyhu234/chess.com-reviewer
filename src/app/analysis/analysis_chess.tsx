@@ -6,7 +6,7 @@ import Image from 'next/image'
 import localFont from "next/font/local"
 import useSWR from 'swr'
 import { useEffect, useState } from "react"
-import { ChessboardArrows } from "../../utils/chessboard_arrows"
+import { ChessboardArrows } from "../../lib/utils/chessboard_arrows"
 import AnalysisMove from "./analysis_move"
 import MoveSymbol from "./move_symbol"
 

@@ -1,7 +1,6 @@
 'use client'
 
 import { Move } from "chess.js"
-import Image from 'next/image'
 import MoveSymbol from "./move_symbol"
 
 const getMoveColor = (moveType: string) => {
