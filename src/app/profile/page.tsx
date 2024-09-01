@@ -4,56 +4,69 @@ import Game from "./game"
 const { signal } = new AbortController()
 
 async function getProfile(username: string) {
-  const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}`, {
-    signal: signal,
-    cache: "no-store",
-    headers: {
-      "User-Agent": "Chess.com Analyzer"
-    }
-  })
+  try {
+    const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}`, {
+      signal: signal,
+      cache: "no-store",
+      headers: {
+        "User-Agent": "Chess.com Analyzer"
+      }
+    })
 
-  if (!response.ok) {
+    if (!response.ok) {
+      redirect(`/?searchError=Failed to fetch profile data for user ${username}`)
+    }
+
+    return response.json()
+  } catch {
     redirect(`/?searchError=Failed to fetch profile data for user ${username}`)
   }
-
-  return response.json()
 }
 
 async function getGames(username: string) {
-  const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, {
-    signal: signal,
-    cache: "no-store",
-    headers: {
-      "User-Agent": "Chess.com Analyzer"
-    }
-  })
+  try {
+    const response = await fetch(`https://api.chess.com/pub/player/${username.toLowerCase()}/games/archives`, {
+      signal: signal,
+      cache: "no-store",
+      headers: {
+        "User-Agent": "Chess.com Analyzer"
+      }
+    })
 
-  if (!response.ok) {
+    if (!response.ok) {
+      redirect(`/?searchError=Failed to fetch games data for user ${username}`)
+    }
+
+    return response.json()
+  } catch {
     redirect(`/?searchError=Failed to fetch games data for user ${username}`)
   }
-
-  return response.json()
 }
 
 async function getAPIData(url: string) {
-  const response = await fetch(url, {
-    signal: signal,
-    cache: "no-store",
-    headers: {
-      "User-Agent": "Chess.com Analyzer"
-    }
-  })
+  try {
+    const response = await fetch(url, {
+      signal: signal,
+      cache: "no-store",
+      headers: {
+        "User-Agent": "Chess.com Analyzer"
+      }
+    })
 
-  if (!response.ok) {
+    if (!response.ok) {
+      redirect(`/?searchError=Failed to fetch data from ${url}`)
+    }
+
+    return response.json()
+  } catch {
     redirect(`/?searchError=Failed to fetch data from ${url}`)
   }
-
-  return response.json()
 }
 
 export default async function Profile({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const profileData = await getProfile(searchParams.username as string)
   const gamesData = await getGames(searchParams.username as string)
+  if (gamesData.archives.length === 0) redirect(`/?searchError=No games found for user ${searchParams.username}`)
   const lastMonthGames = (await getAPIData(gamesData.archives[gamesData.archives.length - 1])).games.filter((game: any) => game.pgn).reverse().splice(0, 10)
   return (
     <main className="flex h-screen flex-col items-center py-24">

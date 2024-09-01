@@ -12,7 +12,7 @@ npm install
 
 Also install a version of Stockfish compatible with your OS from the following site: https://stockfishchess.org/download/
 
-After installing the Stockfish executable put it in repository and add the path to the .env.local file.
+After installing the Stockfish executable put it in repository and add the path to the .env.local file as STOCKFISH_PATH.
 
 Run the dev version or build the project:
 
