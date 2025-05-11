@@ -95,6 +95,7 @@ export async function POST(request: Request) {
     let moveIndex = 0
 
     stockfish.stdout.on("data", (data) => {
+      // Read the evaluation of the current move
       if (data.includes(`info depth ${depth}`) && moveIndex < moves.length + 1) {
         const dataArray = data.toString().split(" ")
         const isWhite = moveIndex % 2 !== 1
@@ -112,11 +113,13 @@ export async function POST(request: Request) {
         } else bestScore = (parseInt(dataArray[dataArray.findIndex((x: string) => x.includes("cp")) + 1]) / (isWhite ? 100 : -100)).toString()
         evaluations[moveIndex].bestScore = bestScore
       }
+      // Read the best move
       if (data.includes("bestmove") && moveIndex < moves.length + 1) {
         const dataArray = data.toString().split(" ")
         const bestMove = dataArray[dataArray.findIndex((x: string) => x.includes("bestmove")) + 1].substring(0, 4)
         evaluations[moveIndex].bestMoveLan = bestMove
         moveIndex++
+        // Post-processing after last move
         if (moveIndex === moves.length + 1) {
           for (let i = 0; i < evaluations.length - 1; i++) {
             evaluations[i].score = evaluations[i + 1].bestScore

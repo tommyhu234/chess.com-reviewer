@@ -10,17 +10,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "chess.com-reviewer": "file:",
     "chess.js": "^1.0.0-beta.7",
     "chessboardjsx": "^2.4.7",
-    "luxon": "^3.4.4",
-    "next": "14.1.0",
+    "luxon": "^3.6.1",
+    "next": "14.2.28",
     "react": "^18",
     "react-dom": "^18",
     "sharp": "^0.33.4",
     "swr": "^2.2.5"
   },
   "devDependencies": {
-    "@types/luxon": "^3.4.2",
+    "@types/luxon": "^3.6.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

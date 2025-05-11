@@ -2,6 +2,7 @@
 
 import { Move } from "chess.js"
 import MoveSymbol from "./move_symbol"
+import { evaluatePosition } from "./actions"
 
 const getMoveColor = (moveType: string) => {
   if (moveType === "Blunder") return "text-move-blunder"
